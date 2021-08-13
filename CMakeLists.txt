@@ -23,4 +23,4 @@ add_executable(ProgressiveGradientDescriptor
         main.cpp)
 
 target_link_libraries(ProgressiveGradientDescriptor ${OpenCv_LIBS}
-)
+        )

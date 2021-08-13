@@ -5,10 +5,10 @@
 
 
 using namespace std;
-string src_pathname = "data/Kamisato.jpeg";
-string path_project = "/Users/x-contion/Desktop/LocalCode/C++/ProgressiveGradientDescriptor/";
 
 int main(int argc, char *argv[]) {
+	string src_pathname = "data/Kamisato.jpeg";
+	string path_project = "/Users/x-contion/Desktop/LocalCode/C++/ProgressiveGradientDescriptor/";
 
 
 	cv::Mat img_origin = cv::imread(path_project + "/" + src_pathname);
@@ -26,7 +26,7 @@ int main(int argc, char *argv[]) {
 	     << "\n系统中的long占用大小为：" << level_3 << "×8b"
 	     << endl;
 
-	PGDClass::calc_PGDFilter(img_origin, pgd_result, 1, PGDClass::PGD_SampleNums_4);
+	PGDClass::calc_PGDFilter(img_origin, pgd_result, 1, PGDClass::PGD_SampleNums_8);
 
 
 

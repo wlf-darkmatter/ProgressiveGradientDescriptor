@@ -24,13 +24,13 @@ var indexSectionNames =
 
 var indexSectionLabels =
 {
-  0: "All",
-  1: "Classes",
-  2: "Files",
-  3: "Functions",
-  4: "Variables",
-  5: "Enumerations",
-  6: "Enumerator",
-  7: "Macros"
+  0: "全部",
+  1: "类",
+  2: "文件",
+  3: "函数",
+  4: "变量",
+  5: "枚举",
+  6: "枚举值",
+  7: "宏定义"
 };
 
