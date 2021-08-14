@@ -169,6 +169,7 @@ PGDClass::calc_N4_QuadraticInterpolationInit(Struct_N4InterpList &struct_n4Inter
 		struct_n4Interp.arr_InterpOffsetX[i][3] = x_1;
 		struct_n4Interp.arr_InterpOffsetY[i][3] = y_2;
 
+
 		///设置样本周边点的二次插值比重，放入放入Struct_N4InterpList中的【arr_InterpWeight】
 		//      ①  ↑             ②
 		//          |dy_1
