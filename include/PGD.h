@@ -35,9 +35,9 @@ public:
 	 */
 	struct Struct_N4InterpList : Struct_SampleOffsetList {
 		explicit Struct_N4InterpList(Struct_SampleOffsetList list);///< 利用父类来初始化该结构体
-		double arr_InterpWeight[32][4]{};///<存放权重的数组
-		unsigned short arr_InterpOffsetX[32][4]{};///<存放每个采样点插值所需的参考点相对于中心点的X偏移量
-		unsigned short arr_InterpOffsetY[32][4]{};///<存放每个采样点插值所需的参考点相对于中心点的Y偏移量
+		double arr_InterpWeight[32][4];///<存放权重的数组
+		unsigned short arr_InterpOffsetX[32][4];///<存放每个采样点插值所需的参考点相对于中心点的X偏移量
+		unsigned short arr_InterpOffsetY[32][4];///<存放每个采样点插值所需的参考点相对于中心点的Y偏移量
 	};
 	/*!
 	 * @struct Struct_N9InterpList
@@ -49,7 +49,9 @@ public:
 		unsigned short arr_InterpOffsetY[32][9];///<存放每个采样点插值所需的参考点相对于中心点的Y偏移量
 	};
 
-	static cv::Mat calc_PGDFilter(cv::InputArray _src, cv::OutputArray _dst, float radius, PGD_SampleNums n_sample);
+	static cv::Mat
+	calc_PGDFilter(const cv::_InputArray &_src, const cv::_OutputArray &_dst, float radius, float radius_2,
+	               PGD_SampleNums n_sample);
 
 
 private:
@@ -64,7 +66,10 @@ private:
 	calc_N9_QuadraticInterpolationInit(Struct_N9InterpList &struct_n9Interp, int n_sample);
 
 	static void
-	calc_N4PGD_Traverse(const cv::Mat& src,cv::Mat &dst,Struct_N9InterpList struct_n4Interp,int n_sample);
+	calc_N4PGD_Traverse(const cv::Mat &src, cv::Mat &PGD_Data,
+						Struct_N4InterpList struct_n4Interp, int n_sample,
+	                    double r1,
+	                    double r2);
 };
 
 

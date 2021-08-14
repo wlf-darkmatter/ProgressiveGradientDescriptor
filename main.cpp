@@ -26,7 +26,7 @@ int main(int argc, char *argv[]) {
 	     << "\n系统中的long占用大小为：" << level_3 << "×8b"
 	     << endl;
 
-	PGDClass::calc_PGDFilter(img_origin, pgd_result, 1, PGDClass::PGD_SampleNums_8);
+	PGDClass::calc_PGDFilter(img_origin, pgd_result, 2, 1, PGDClass::PGD_SampleNums_8);
 
 
 

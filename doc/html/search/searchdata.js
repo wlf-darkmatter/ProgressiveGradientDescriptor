@@ -1,13 +1,14 @@
 var indexSectionsWithContent =
 {
-  0: "acdhimps",
+  0: "acdhimps待",
   1: "ps",
   2: "cmp",
-  3: "cdm",
-  4: "aips",
+  3: "cdms",
+  4: "ai",
   5: "p",
   6: "p",
-  7: "acdhps"
+  7: "acdhps",
+  8: "待"
 };
 
 var indexSectionNames =
@@ -19,7 +20,8 @@ var indexSectionNames =
   4: "variables",
   5: "enums",
   6: "enumvalues",
-  7: "defines"
+  7: "defines",
+  8: "pages"
 };
 
 var indexSectionLabels =
@@ -31,6 +33,7 @@ var indexSectionLabels =
   4: "变量",
   5: "枚举",
   6: "枚举值",
-  7: "宏定义"
+  7: "宏定义",
+  8: "页"
 };
 

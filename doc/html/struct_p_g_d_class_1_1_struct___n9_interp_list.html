@@ -74,6 +74,9 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 
+<p>继承自Struct_SampleOffsetList，包含有通过N9方法插值的必要列表，避免后续算法中不断重复计算该值  
+ <a href="struct_p_g_d_class_1_1_struct___n9_interp_list.html#details">更多...</a></p>
+
 <p><code>#include &lt;<a class="el" href="_p_g_d_8h_source.html">PGD.h</a>&gt;</code></p>
 <div class="dynheader">
 类 PGDClass::Struct_N9InterpList 继承关系图:</div>
@@ -88,45 +91,54 @@ $(function() {
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Public 属性</h2></td></tr>
 <tr class="memitem:acd446deea74f747c1b973f8eca37d38d"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_p_g_d_class_1_1_struct___n9_interp_list.html#acd446deea74f747c1b973f8eca37d38d">arr_InterpWeight</a> [32][9]</td></tr>
+<tr class="memdesc:acd446deea74f747c1b973f8eca37d38d"><td class="mdescLeft">&#160;</td><td class="mdescRight">存放权重的数组  <a href="struct_p_g_d_class_1_1_struct___n9_interp_list.html#acd446deea74f747c1b973f8eca37d38d">更多...</a><br /></td></tr>
 <tr class="separator:acd446deea74f747c1b973f8eca37d38d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7134eae7179e0ed1a890ef07f34ed2e5"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_p_g_d_class_1_1_struct___n9_interp_list.html#a7134eae7179e0ed1a890ef07f34ed2e5">arr_InterpOffsetX</a> [32][9]</td></tr>
-<tr class="separator:a7134eae7179e0ed1a890ef07f34ed2e5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7473a9cc91904ee139b72af09928468c"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_p_g_d_class_1_1_struct___n9_interp_list.html#a7473a9cc91904ee139b72af09928468c">arr_InterpOffsetY</a> [32][9]</td></tr>
-<tr class="separator:a7473a9cc91904ee139b72af09928468c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad481136f0b4f2ceafc361b3e651639a6"><td class="memItemLeft" align="right" valign="top">unsigned short&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_p_g_d_class_1_1_struct___n9_interp_list.html#ad481136f0b4f2ceafc361b3e651639a6">arr_InterpOffsetX</a> [32][9]</td></tr>
+<tr class="memdesc:ad481136f0b4f2ceafc361b3e651639a6"><td class="mdescLeft">&#160;</td><td class="mdescRight">存放每个采样点插值所需的参考点相对于中心点的X偏移量  <a href="struct_p_g_d_class_1_1_struct___n9_interp_list.html#ad481136f0b4f2ceafc361b3e651639a6">更多...</a><br /></td></tr>
+<tr class="separator:ad481136f0b4f2ceafc361b3e651639a6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad19ab67ec14982cc364ab88583ecb4a6"><td class="memItemLeft" align="right" valign="top">unsigned short&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_p_g_d_class_1_1_struct___n9_interp_list.html#ad19ab67ec14982cc364ab88583ecb4a6">arr_InterpOffsetY</a> [32][9]</td></tr>
+<tr class="memdesc:ad19ab67ec14982cc364ab88583ecb4a6"><td class="mdescLeft">&#160;</td><td class="mdescRight">存放每个采样点插值所需的参考点相对于中心点的Y偏移量  <a href="struct_p_g_d_class_1_1_struct___n9_interp_list.html#ad19ab67ec14982cc364ab88583ecb4a6">更多...</a><br /></td></tr>
+<tr class="separator:ad19ab67ec14982cc364ab88583ecb4a6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_attribs_struct_p_g_d_class_1_1_struct___sample_offset_list"><td colspan="2" onclick="javascript:toggleInherit('pub_attribs_struct_p_g_d_class_1_1_struct___sample_offset_list')"><img src="closed.png" alt="-"/>&#160;Public 属性 继承自 <a class="el" href="struct_p_g_d_class_1_1_struct___sample_offset_list.html">PGDClass::Struct_SampleOffsetList</a></td></tr>
-<tr class="memitem:a5f326bc85065922a8505e53c086a9d09 inherit pub_attribs_struct_p_g_d_class_1_1_struct___sample_offset_list"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_p_g_d_class_1_1_struct___sample_offset_list.html#a5f326bc85065922a8505e53c086a9d09">arr_SampleOffsetX</a> [32]</td></tr>
-<tr class="memdesc:a5f326bc85065922a8505e53c086a9d09 inherit pub_attribs_struct_p_g_d_class_1_1_struct___sample_offset_list"><td class="mdescLeft">&#160;</td><td class="mdescRight">表示第i个元素的x偏移量;  <a href="struct_p_g_d_class_1_1_struct___sample_offset_list.html#a5f326bc85065922a8505e53c086a9d09">更多...</a><br /></td></tr>
-<tr class="separator:a5f326bc85065922a8505e53c086a9d09 inherit pub_attribs_struct_p_g_d_class_1_1_struct___sample_offset_list"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5d653bae10242d694670ede3072605ee inherit pub_attribs_struct_p_g_d_class_1_1_struct___sample_offset_list"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_p_g_d_class_1_1_struct___sample_offset_list.html#a5d653bae10242d694670ede3072605ee">arr_SampleOffsetY</a> [32]</td></tr>
-<tr class="memdesc:a5d653bae10242d694670ede3072605ee inherit pub_attribs_struct_p_g_d_class_1_1_struct___sample_offset_list"><td class="mdescLeft">&#160;</td><td class="mdescRight">表示第i个元素的y偏移量;  <a href="struct_p_g_d_class_1_1_struct___sample_offset_list.html#a5d653bae10242d694670ede3072605ee">更多...</a><br /></td></tr>
-<tr class="separator:a5d653bae10242d694670ede3072605ee inherit pub_attribs_struct_p_g_d_class_1_1_struct___sample_offset_list"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af97926359ae823924125a59cc4ef8cca inherit pub_attribs_struct_p_g_d_class_1_1_struct___sample_offset_list"><td class="memItemLeft" align="right" valign="top">double *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_p_g_d_class_1_1_struct___sample_offset_list.html#af97926359ae823924125a59cc4ef8cca">arr_SampleOffsetX</a></td></tr>
+<tr class="memdesc:af97926359ae823924125a59cc4ef8cca inherit pub_attribs_struct_p_g_d_class_1_1_struct___sample_offset_list"><td class="mdescLeft">&#160;</td><td class="mdescRight">表示第i个元素的x偏移量;  <a href="struct_p_g_d_class_1_1_struct___sample_offset_list.html#af97926359ae823924125a59cc4ef8cca">更多...</a><br /></td></tr>
+<tr class="separator:af97926359ae823924125a59cc4ef8cca inherit pub_attribs_struct_p_g_d_class_1_1_struct___sample_offset_list"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab7c5733277c84f420c48eaab2c2baa6a inherit pub_attribs_struct_p_g_d_class_1_1_struct___sample_offset_list"><td class="memItemLeft" align="right" valign="top">double *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_p_g_d_class_1_1_struct___sample_offset_list.html#ab7c5733277c84f420c48eaab2c2baa6a">arr_SampleOffsetY</a></td></tr>
+<tr class="memdesc:ab7c5733277c84f420c48eaab2c2baa6a inherit pub_attribs_struct_p_g_d_class_1_1_struct___sample_offset_list"><td class="mdescLeft">&#160;</td><td class="mdescRight">表示第i个元素的y偏移量;  <a href="struct_p_g_d_class_1_1_struct___sample_offset_list.html#ab7c5733277c84f420c48eaab2c2baa6a">更多...</a><br /></td></tr>
+<tr class="separator:ab7c5733277c84f420c48eaab2c2baa6a inherit pub_attribs_struct_p_g_d_class_1_1_struct___sample_offset_list"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<h2 class="groupheader">类成员变量说明</h2>
-<a id="a7134eae7179e0ed1a890ef07f34ed2e5"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a7134eae7179e0ed1a890ef07f34ed2e5">&#9670;&nbsp;</a></span>arr_InterpOffsetX</h2>
+<a name="details" id="details"></a><h2 class="groupheader">详细描述</h2>
+<div class="textblock"><p>继承自Struct_SampleOffsetList，包含有通过N9方法插值的必要列表，避免后续算法中不断重复计算该值 </p>
+</div><h2 class="groupheader">类成员变量说明</h2>
+<a id="ad481136f0b4f2ceafc361b3e651639a6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad481136f0b4f2ceafc361b3e651639a6">&#9670;&nbsp;</a></span>arr_InterpOffsetX</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">double PGDClass::Struct_N9InterpList::arr_InterpOffsetX[32][9]</td>
+          <td class="memname">unsigned short PGDClass::Struct_N9InterpList::arr_InterpOffsetX[32][9]</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
+<p>存放每个采样点插值所需的参考点相对于中心点的X偏移量 </p>
+
 </div>
 </div>
-<a id="a7473a9cc91904ee139b72af09928468c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a7473a9cc91904ee139b72af09928468c">&#9670;&nbsp;</a></span>arr_InterpOffsetY</h2>
+<a id="ad19ab67ec14982cc364ab88583ecb4a6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad19ab67ec14982cc364ab88583ecb4a6">&#9670;&nbsp;</a></span>arr_InterpOffsetY</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">double PGDClass::Struct_N9InterpList::arr_InterpOffsetY[32][9]</td>
+          <td class="memname">unsigned short PGDClass::Struct_N9InterpList::arr_InterpOffsetY[32][9]</td>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>存放每个采样点插值所需的参考点相对于中心点的Y偏移量 </p>
 
 </div>
 </div>
@@ -141,6 +153,8 @@ Public 属性</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>存放权重的数组 </p>
 
 </div>
 </div>

@@ -81,8 +81,10 @@ $(function() {
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="nested-classes"></a>
 类</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_p_g_d_class_1_1_struct___n4_interp_list.html">Struct_N4InterpList</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">继承自Struct_SampleOffsetList，包含有通过N4方法插值的必要列表，避免后续算法中不断重复计算该值  <a href="struct_p_g_d_class_1_1_struct___n4_interp_list.html#details">更多...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_p_g_d_class_1_1_struct___n9_interp_list.html">Struct_N9InterpList</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">继承自Struct_SampleOffsetList，包含有通过N9方法插值的必要列表，避免后续算法中不断重复计算该值  <a href="struct_p_g_d_class_1_1_struct___n9_interp_list.html#details">更多...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_p_g_d_class_1_1_struct___sample_offset_list.html">Struct_SampleOffsetList</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">存放样本点相对于参考中心偏移量的结构体  <a href="struct_p_g_d_class_1_1_struct___sample_offset_list.html#details">更多...</a><br /></td></tr>
@@ -105,22 +107,26 @@ Public 类型</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-methods"></a>
 静态 Public 成员函数</h2></td></tr>
-<tr class="memitem:a1ae870628127035eebb3472bbe677aad"><td class="memItemLeft" align="right" valign="top">static cv::Mat&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_p_g_d_class.html#a1ae870628127035eebb3472bbe677aad">calc_PGDFilter</a> (cv::InputArray _src, cv::OutputArray _dst, float radio, <a class="el" href="class_p_g_d_class.html#ac6d3a5526cf8dedd7a2a749b969cff33">PGD_SampleNums</a> n_sample)</td></tr>
-<tr class="memdesc:a1ae870628127035eebb3472bbe677aad"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="class_p_g_d_class.html#a1ae870628127035eebb3472bbe677aad" title="calc_PGDFilter()函数，根据给定的圆周大小计算n个采样点的方向不变特征">calc_PGDFilter()</a>函数，根据给定的圆周大小计算n个采样点的方向不变特征  <a href="class_p_g_d_class.html#a1ae870628127035eebb3472bbe677aad">更多...</a><br /></td></tr>
-<tr class="separator:a1ae870628127035eebb3472bbe677aad"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a82c820bae40215b475091a995f496ddb"><td class="memItemLeft" align="right" valign="top">static cv::Mat&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_p_g_d_class.html#a82c820bae40215b475091a995f496ddb">calc_PGDFilter</a> (const cv::_InputArray &amp;_src, const cv::_OutputArray &amp;_dst, float radius, float radius_2, <a class="el" href="class_p_g_d_class.html#ac6d3a5526cf8dedd7a2a749b969cff33">PGD_SampleNums</a> n_sample)</td></tr>
+<tr class="memdesc:a82c820bae40215b475091a995f496ddb"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="class_p_g_d_class.html#a82c820bae40215b475091a995f496ddb" title="calc_PGDFilter()函数，根据给定的圆周大小计算n个采样点的方向不变特征">calc_PGDFilter()</a>函数，根据给定的圆周大小计算n个采样点的方向不变特征  <a href="class_p_g_d_class.html#a82c820bae40215b475091a995f496ddb">更多...</a><br /></td></tr>
+<tr class="separator:a82c820bae40215b475091a995f496ddb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-static-methods"></a>
 静态 Private 成员函数</h2></td></tr>
 <tr class="memitem:aa432e336a12fe58b6ba459c06095c15a"><td class="memItemLeft" align="right" valign="top">static cv::Mat&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_p_g_d_class.html#aa432e336a12fe58b6ba459c06095c15a">def_DstMat</a> (int rows, int cols, <a class="el" href="class_p_g_d_class.html#ac6d3a5526cf8dedd7a2a749b969cff33">PGD_SampleNums</a> n_sample)</td></tr>
 <tr class="memdesc:aa432e336a12fe58b6ba459c06095c15a"><td class="mdescLeft">&#160;</td><td class="mdescRight">私有函数，创建输出的空矩阵  <a href="class_p_g_d_class.html#aa432e336a12fe58b6ba459c06095c15a">更多...</a><br /></td></tr>
 <tr class="separator:aa432e336a12fe58b6ba459c06095c15a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac8c20d0c0c12c81e9dae13aa06abba9a"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="struct_p_g_d_class_1_1_struct___sample_offset_list.html">Struct_SampleOffsetList</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_p_g_d_class.html#ac8c20d0c0c12c81e9dae13aa06abba9a">calc_CircleOffset</a> (double radio, int n_sample)</td></tr>
-<tr class="memdesc:ac8c20d0c0c12c81e9dae13aa06abba9a"><td class="mdescLeft">&#160;</td><td class="mdescRight">计算在目标区域中邻域的n_sample个采样点相对于中心点的偏移量  <a href="class_p_g_d_class.html#ac8c20d0c0c12c81e9dae13aa06abba9a">更多...</a><br /></td></tr>
-<tr class="separator:ac8c20d0c0c12c81e9dae13aa06abba9a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad2fe859ac22a0a02a158218152b61a40"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="struct_p_g_d_class_1_1_struct___n4_interp_list.html">Struct_N4InterpList</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_p_g_d_class.html#ad2fe859ac22a0a02a158218152b61a40">calc_N4_QuadraticInterpolationInit</a> (double radio, int n_sample)</td></tr>
-<tr class="separator:ad2fe859ac22a0a02a158218152b61a40"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9bf292fad4464b000f7804cdb137ef0e"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="struct_p_g_d_class_1_1_struct___n9_interp_list.html">Struct_N9InterpList</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_p_g_d_class.html#a9bf292fad4464b000f7804cdb137ef0e">calc_N9_QuadraticInterpolationInit</a> (double radio, int n_sample)</td></tr>
-<tr class="separator:a9bf292fad4464b000f7804cdb137ef0e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a603e150fb777f93a333add736ded16e8"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_p_g_d_class.html#a603e150fb777f93a333add736ded16e8">calc_CircleOffset</a> (<a class="el" href="struct_p_g_d_class_1_1_struct___sample_offset_list.html">Struct_SampleOffsetList</a> &amp;struct_sampleOffset, double radio, int n_sample)</td></tr>
+<tr class="memdesc:a603e150fb777f93a333add736ded16e8"><td class="mdescLeft">&#160;</td><td class="mdescRight">计算在目标区域中邻域的n_sample个采样点相对于中心点的偏移量  <a href="class_p_g_d_class.html#a603e150fb777f93a333add736ded16e8">更多...</a><br /></td></tr>
+<tr class="separator:a603e150fb777f93a333add736ded16e8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9dd57f819f1992c6f21229b9106958ef"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_p_g_d_class.html#a9dd57f819f1992c6f21229b9106958ef">calc_N4_QuadraticInterpolationInit</a> (<a class="el" href="struct_p_g_d_class_1_1_struct___n4_interp_list.html">Struct_N4InterpList</a> &amp;struct_n4Interp, int n_sample)</td></tr>
+<tr class="memdesc:a9dd57f819f1992c6f21229b9106958ef"><td class="mdescLeft">&#160;</td><td class="mdescRight">内联函数，N4法二次插值。根据偏移量计算二次线性插值对邻域的权重值，插值参考值来源于样本点 散落的田字格内，即最近的4个像素点。  <a href="class_p_g_d_class.html#a9dd57f819f1992c6f21229b9106958ef">更多...</a><br /></td></tr>
+<tr class="separator:a9dd57f819f1992c6f21229b9106958ef"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aebf3035ffa02b930fa4f12dbc9628d21"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_p_g_d_class.html#aebf3035ffa02b930fa4f12dbc9628d21">calc_N9_QuadraticInterpolationInit</a> (<a class="el" href="struct_p_g_d_class_1_1_struct___n9_interp_list.html">Struct_N9InterpList</a> &amp;struct_n9Interp, int n_sample)</td></tr>
+<tr class="separator:aebf3035ffa02b930fa4f12dbc9628d21"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af5413625da6ed880e0915d4a732dda80"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_p_g_d_class.html#af5413625da6ed880e0915d4a732dda80">calc_N4PGD_Traverse</a> (const cv::Mat &amp;src, cv::Mat &amp;dst, <a class="el" href="struct_p_g_d_class_1_1_struct___n9_interp_list.html">Struct_N9InterpList</a> struct_n4Interp, int n_sample)</td></tr>
+<tr class="memdesc:af5413625da6ed880e0915d4a732dda80"><td class="mdescLeft">&#160;</td><td class="mdescRight">calc_N4PGD_Traverse 通过N4方法插值遍历全图  <a href="class_p_g_d_class.html#af5413625da6ed880e0915d4a732dda80">更多...</a><br /></td></tr>
+<tr class="separator:af5413625da6ed880e0915d4a732dda80"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">详细描述</h2>
 <div class="textblock"><p>所有计算PGD的内部函数都整合到了一起方便后面的调试 </p>
@@ -149,8 +155,8 @@ Public 类型</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">成员函数说明</h2>
-<a id="ac8c20d0c0c12c81e9dae13aa06abba9a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac8c20d0c0c12c81e9dae13aa06abba9a">&#9670;&nbsp;</a></span>calc_CircleOffset()</h2>
+<a id="a603e150fb777f93a333add736ded16e8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a603e150fb777f93a333add736ded16e8">&#9670;&nbsp;</a></span>calc_CircleOffset()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -159,10 +165,124 @@ Public 类型</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="struct_p_g_d_class_1_1_struct___sample_offset_list.html">PGDClass::Struct_SampleOffsetList</a> PGDClass::calc_CircleOffset </td>
+          <td class="memname">void PGDClass::calc_CircleOffset </td>
           <td>(</td>
+          <td class="paramtype"><a class="el" href="struct_p_g_d_class_1_1_struct___sample_offset_list.html">Struct_SampleOffsetList</a> &amp;&#160;</td>
+          <td class="paramname"><em>struct_sampleOffset</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
           <td class="paramtype">double&#160;</td>
           <td class="paramname"><em>radio</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>n_sample</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">static</span><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>计算在目标区域中邻域的n_sample个采样点相对于中心点的偏移量 </p>
+<dl class="params"><dt>参数</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">n_sample</td><td>采样点个数，有几个采样点就有几个需要计算的偏移量 </td></tr>
+    <tr><td class="paramname">radio</td><td>偏移量半径 </td></tr>
+    <tr><td class="paramname">struct_sampleOffset</td><td>类内结构体的**引用** Struct_SampleOffsetList（专门存放每个采样点相对于中心处偏移量的结构体） </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>返回</dt><dd></dd></dl>
+
+</div>
+</div>
+<a id="a9dd57f819f1992c6f21229b9106958ef"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9dd57f819f1992c6f21229b9106958ef">&#9670;&nbsp;</a></span>calc_N4_QuadraticInterpolationInit()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void PGDClass::calc_N4_QuadraticInterpolationInit </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="struct_p_g_d_class_1_1_struct___n4_interp_list.html">Struct_N4InterpList</a> &amp;&#160;</td>
+          <td class="paramname"><em>struct_n4Interp</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>n_sample</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">static</span><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>内联函数，N4法二次插值。根据偏移量计算二次线性插值对邻域的权重值，插值参考值来源于样本点 散落的田字格内，即最近的4个像素点。 </p>
+<dl class="params"><dt>参数</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">struct_n4Interp</td><td>N4插值法初始信息结构体的**引用** </td></tr>
+    <tr><td class="paramname">n_sample</td><td>样本数 </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>返回</dt><dd></dd></dl>
+<p>如果恰好在x'或y'直线上，那么调制位置，反正计算采样权重的时候其他的都为0</p>
+<p>设置样本点周边的四个参考点的位置，放入Struct_N4InterpList中的【arr_InterpOffsetX】和【arr_InterpOffsetY】</p>
+<p>设置样本周边点的二次插值比重，放入放入Struct_N4InterpList中的【arr_InterpWeight】</p>
+
+</div>
+</div>
+<a id="af5413625da6ed880e0915d4a732dda80"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af5413625da6ed880e0915d4a732dda80">&#9670;&nbsp;</a></span>calc_N4PGD_Traverse()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void PGDClass::calc_N4PGD_Traverse </td>
+          <td>(</td>
+          <td class="paramtype">const cv::Mat &amp;&#160;</td>
+          <td class="paramname"><em>src</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">cv::Mat &amp;&#160;</td>
+          <td class="paramname"><em>dst</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="struct_p_g_d_class_1_1_struct___n9_interp_list.html">PGDClass::Struct_N9InterpList</a>&#160;</td>
+          <td class="paramname"><em>struct_n4Interp</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -183,21 +303,22 @@ Public 类型</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>计算在目标区域中邻域的n_sample个采样点相对于中心点的偏移量 </p>
+<p>calc_N4PGD_Traverse 通过N4方法插值遍历全图 </p>
 <dl class="params"><dt>参数</dt><dd>
   <table class="params">
-    <tr><td class="paramname">n_sample</td><td>采样点个数，有几个采样点就有几个需要计算的偏移量 </td></tr>
-    <tr><td class="paramname">radio</td><td>偏移量半径 </td></tr>
+    <tr><td class="paramname">src</td><td>输入图像（必须是单通道） </td></tr>
+    <tr><td class="paramname">dst</td><td>输出图像（本质上不是图像，而是二进制矩阵） </td></tr>
+    <tr><td class="paramname">struct_n4Interp</td><td>输入的带权重的参数 </td></tr>
+    <tr><td class="paramname">n_sample</td><td>要获取的样本点数 </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>返回</dt><dd>返回类内结构体 Struct_SampleOffsetList（专门存放每个采样点相对于中心处偏移量的结构体） </dd></dl>
-<dl class="section note"><dt>注解</dt><dd>offset[ i ][ 0 ] 表示第i个元素的x偏移量; offset[ i ][ 1 ] 表示第i个元素的y偏移量 </dd></dl>
+<dl class="section note"><dt>注解</dt><dd>这里采用了指针索引法，速度可能不是很快，但是比at&lt;Type&gt;(x,y)随机读写的速度快 </dd></dl>
 
 </div>
 </div>
-<a id="ad2fe859ac22a0a02a158218152b61a40"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad2fe859ac22a0a02a158218152b61a40">&#9670;&nbsp;</a></span>calc_N4_QuadraticInterpolationInit()</h2>
+<a id="aebf3035ffa02b930fa4f12dbc9628d21"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aebf3035ffa02b930fa4f12dbc9628d21">&#9670;&nbsp;</a></span>calc_N9_QuadraticInterpolationInit()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -206,10 +327,10 @@ Public 类型</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">static <a class="el" href="struct_p_g_d_class_1_1_struct___n4_interp_list.html">Struct_N4InterpList</a> PGDClass::calc_N4_QuadraticInterpolationInit </td>
+          <td class="memname">void PGDClass::calc_N9_QuadraticInterpolationInit </td>
           <td>(</td>
-          <td class="paramtype">double&#160;</td>
-          <td class="paramname"><em>radio</em>, </td>
+          <td class="paramtype"><a class="el" href="struct_p_g_d_class_1_1_struct___n9_interp_list.html">PGDClass::Struct_N9InterpList</a> &amp;&#160;</td>
+          <td class="paramname"><em>struct_n9Interp</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -232,44 +353,8 @@ Public 类型</h2></td></tr>
 
 </div>
 </div>
-<a id="a9bf292fad4464b000f7804cdb137ef0e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9bf292fad4464b000f7804cdb137ef0e">&#9670;&nbsp;</a></span>calc_N9_QuadraticInterpolationInit()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">static <a class="el" href="struct_p_g_d_class_1_1_struct___n9_interp_list.html">Struct_N9InterpList</a> PGDClass::calc_N9_QuadraticInterpolationInit </td>
-          <td>(</td>
-          <td class="paramtype">double&#160;</td>
-          <td class="paramname"><em>radio</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>n_sample</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">static</span><span class="mlabel">private</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a1ae870628127035eebb3472bbe677aad"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a1ae870628127035eebb3472bbe677aad">&#9670;&nbsp;</a></span>calc_PGDFilter()</h2>
+<a id="a82c820bae40215b475091a995f496ddb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a82c820bae40215b475091a995f496ddb">&#9670;&nbsp;</a></span>calc_PGDFilter()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -280,20 +365,26 @@ Public 类型</h2></td></tr>
         <tr>
           <td class="memname">cv::Mat PGDClass::calc_PGDFilter </td>
           <td>(</td>
-          <td class="paramtype">cv::InputArray&#160;</td>
+          <td class="paramtype">const cv::_InputArray &amp;&#160;</td>
           <td class="paramname"><em>_src</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">cv::OutputArray&#160;</td>
+          <td class="paramtype">const cv::_OutputArray &amp;&#160;</td>
           <td class="paramname"><em>_dst</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">float&#160;</td>
-          <td class="paramname"><em>radio</em>, </td>
+          <td class="paramname"><em>radius</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">float&#160;</td>
+          <td class="paramname"><em>radius_2</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -314,20 +405,22 @@ Public 类型</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p><a class="el" href="class_p_g_d_class.html#a1ae870628127035eebb3472bbe677aad" title="calc_PGDFilter()函数，根据给定的圆周大小计算n个采样点的方向不变特征">calc_PGDFilter()</a>函数，根据给定的圆周大小计算n个采样点的方向不变特征 </p>
+<p><a class="el" href="class_p_g_d_class.html#a82c820bae40215b475091a995f496ddb" title="calc_PGDFilter()函数，根据给定的圆周大小计算n个采样点的方向不变特征">calc_PGDFilter()</a>函数，根据给定的圆周大小计算n个采样点的方向不变特征 </p>
 <dl class="params"><dt>参数</dt><dd>
   <table class="params">
     <tr><td class="paramname">_src</td><td>输入的矩阵 </td></tr>
     <tr><td class="paramname">_dst</td><td>返回的矩阵 </td></tr>
-    <tr><td class="paramname">radio</td><td>半径大小（浮点数） </td></tr>
-    <tr><td class="paramname">n_sample</td><td>采样点数，一般为4的倍数 </td></tr>
+    <tr><td class="paramname">radius</td><td>邻域样本点半径大小（浮点数） </td></tr>
+    <tr><td class="paramname">radius_2</td><td>邻域样本点周围的LBP计算范围 </td></tr>
+    <tr><td class="paramname">n_sample</td><td>采样点数，一般为4的倍数，由枚举值决定 </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>返回</dt><dd>返回值是一个矩阵， </dd></dl>
+<dl class="section return"><dt>返回</dt><dd>返回值是一个矩阵 </dd></dl>
 <p>①通道数量转换</p>
+<p>一律使用double类型，同时对边缘进行填充</p>
 <p>②计算样本采样坐标偏移量</p>
-<p>③计算每一个采样点的二次插值需要的参考比例</p>
+<p>③计算每一个采样点的二次插值需要的参考权重（这里是N4方法）</p>
 <p>④遍历全图</p>
 
 </div>

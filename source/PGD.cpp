@@ -7,14 +7,20 @@
  * @brief calc_PGDFilter()函数，根据给定的圆周大小计算n个采样点的方向不变特征
  * @param _src 输入的矩阵
  * @param _dst 返回的矩阵
- * @param radius 半径大小（浮点数）
- * @param n_sample 采样点数，一般为4的倍数
- * @return 返回值是一个矩阵，
+ * @param radius 邻域样本点半径大小（浮点数）
+ * @param radius_2 邻域样本点周围的LBP计算范围
+ * @param n_sample 采样点数，一般为4的倍数，由枚举值决定
+ * @return 返回值是一个矩阵
 */
-cv::Mat PGDClass::calc_PGDFilter(cv::InputArray _src, cv::OutputArray _dst, float radius, PGD_SampleNums n_sample) {
+cv::Mat
+PGDClass::calc_PGDFilter(const cv::_InputArray &_src, const cv::_OutputArray &_dst, float radius, float radius_2,
+                         PGD_SampleNums n_sample) {
 	//这个是采样时候以中心点为圆心，radius为半径的采样圆的最小外接正四边形框的尺寸
-	int l_size = 1 + 2 * int(ceil(radius));
-	//采样正四边形矩形框后，还有一个步骤就是对采样圆上的点进行二次采样，二次采样的
+	//采样正四边形矩形框后，还有一个步骤就是对采样圆上的点进行二次采样，二次采样的大小也需要再次指定
+	//因此需要对原图像的边缘进行填充，填充的大小由radius和radius_2决定
+	int R = (int) ceil(radius + radius_2);
+	int l_size = 1 + 2 * R;
+
 	int rows = _src.rows();
 	int cols = _src.cols();
 	cv::Mat src_gray;
@@ -24,11 +30,11 @@ cv::Mat PGDClass::calc_PGDFilter(cv::InputArray _src, cv::OutputArray _dst, floa
 	if (_src.channels() == 3) {
 		cv::cvtColor(_src, src_gray, cv::COLOR_BGR2GRAY, 0);
 	} else src_gray = _src.getMat();
-
 	///一律使用double类型，同时对边缘进行填充
-
-
-
+	cv::Mat src_double;
+	src_gray.convertTo(src_double, CV_64FC1);
+	///这里姑且使用边缘复制法
+	cv::copyMakeBorder(src_double, src_double, R, R, R, R, cv::BORDER_REPLICATE);
 	cv::Mat dst = def_DstMat(rows, cols, n_sample);
 
 	/*               ①→
@@ -44,6 +50,7 @@ cv::Mat PGDClass::calc_PGDFilter(cv::InputArray _src, cv::OutputArray _dst, floa
 	struct_sampleOffset.arr_SampleOffsetX = new double[n_sample];
 	struct_sampleOffset.arr_SampleOffsetY = new double[n_sample];
 	calc_CircleOffset(struct_sampleOffset, radius, n_sample);
+
 
 
 	/*                  _____
@@ -143,8 +150,8 @@ PGDClass::calc_N4_QuadraticInterpolationInit(Struct_N4InterpList &struct_n4Inter
 		y_1 = (u_short) floor(struct_n4Interp.arr_SampleOffsetY[i]);
 		y_2 = (u_short) ceil(struct_n4Interp.arr_SampleOffsetY[i]);
 		/// 如果恰好在x'或y'直线上，那么调制位置，反正计算采样权重的时候其他的都为0
-		if (x_1==x_2) x_1=x_2-1;
-		if (y_1==y_2) y_1=y_2-1;
+		if (x_1 == x_2) x_1 = x_2 - 1;
+		if (y_1 == y_2) y_1 = y_2 - 1;
 
 		offset_xi = struct_n4Interp.arr_SampleOffsetX[i];
 		offset_yi = struct_n4Interp.arr_SampleOffsetY[i];
@@ -185,19 +192,28 @@ PGDClass::calc_N4_QuadraticInterpolationInit(Struct_N4InterpList &struct_n4Inter
 
 void
 PGDClass::calc_N9_QuadraticInterpolationInit(PGDClass::Struct_N9InterpList &struct_n9Interp, int n_sample) {
-
 }
+
 /*!
  * @brief calc_N4PGD_Traverse 通过N4方法插值遍历全图
  * @param src 输入图像（必须是单通道）
- * @param dst 输出图像（本质上不是图像，而是二进制矩阵）
+ * @param PGD_Data 输出图像（本质上不是图像，而是二进制矩阵）
  * @param struct_n4Interp 输入的带权重的参数
  * @param n_sample 要获取的样本点数
+ * @param r1 采样圆的半径
+ * @param r2 邻域样本点周围的LBP计算范围
  * @note 这里采用了指针索引法，速度可能不是很快，但是比at<Type>(x,y)随机读写的速度快
  */
-void PGDClass::calc_N4PGD_Traverse(const cv::Mat &src, cv::Mat &dst, PGDClass::Struct_N9InterpList struct_n4Interp,
-                                   int n_sample) {
+void
+PGDClass::calc_N4PGD_Traverse(const cv::Mat &src, cv::Mat &PGD_Data,
+                              Struct_N4InterpList struct_n4Interp, int n_sample,
+                              double r1,
+                              double r2) {
+	//输入的图像一般是拓展过的图像，因此可以直接从初始的（0，0）开始遍历
+	int R = (int) ceil(r1 + r2);
+	if (src.isContinuous()){
 
+	}
 }
 
 
