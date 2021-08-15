@@ -1,25 +1,31 @@
-#include <opencv2/opencv.hpp>
 #include <PGD.h>
+#include <opencv2/opencv.hpp>
 
 #define PI 3.1415926535897932384626433832795028841971
 
 /*!
- * @brief calc_PGDFilter()函数，根据给定的圆周大小计算n个采样点的方向不变特征
+ * @brief calc_PGDFilter()函数，根据给定的圆周大小计算n_sample个【环点】的方向不变特征
  * @param _src 输入的矩阵
  * @param _dst 返回的矩阵
- * @param radius 邻域样本点半径大小（浮点数）
- * @param radius_2 邻域样本点周围的LBP计算范围
- * @param n_sample 采样点数，一般为4的倍数，由枚举值决定
+ * @param n_sample 计算的【环点】数，一般为4的倍数，由枚举值决定
+ * @param radius 【环点】半径大小（浮点数）
+ * @param n2_sample 计算的【子环点】个数，一般等于n_sample
+ * @param radius_2 【环点】周围的【子环点】计算范围，默认值等于radius
  * @return 返回值是一个矩阵
-*/
-cv::Mat
-PGDClass::calc_PGDFilter(const cv::_InputArray &_src, const cv::_OutputArray &_dst, float radius, float radius_2,
-                         PGD_SampleNums n_sample) {
+ */
+static cv::Mat PGDClass::calc_PGDFilter(const cv::_InputArray &_src,
+                                        const cv::_OutputArray &_dst,
+                                        PGDClass::PGD_SampleNums n_sample,
+                                        double radius,
+                                        PGDClass::PGD_SampleNums n2_sample,
+                                        double radius_2) {
 	//这个是采样时候以中心点为圆心，radius为半径的采样圆的最小外接正四边形框的尺寸
 	//采样正四边形矩形框后，还有一个步骤就是对采样圆上的点进行二次采样，二次采样的大小也需要再次指定
 	//因此需要对原图像的边缘进行填充，填充的大小由radius和radius_2决定
+	if (radius_2 == 0) radius_2 = radius;
 	int R = (int) ceil(radius + radius_2);
 	int l_size = 1 + 2 * R;
+	if (n2_sample == PGD_SampleNums_SameAs_N_Sample) n2_sample = n_sample;
 
 	int rows = _src.rows();
 	int cols = _src.cols();
@@ -29,12 +35,16 @@ PGDClass::calc_PGDFilter(const cv::_InputArray &_src, const cv::_OutputArray &_d
 	//如果是三通道，使用灰度图像
 	if (_src.channels() == 3) {
 		cv::cvtColor(_src, src_gray, cv::COLOR_BGR2GRAY, 0);
-	} else src_gray = _src.getMat();
+	} else
+		src_gray = _src.getMat();
 	///一律使用double类型，同时对边缘进行填充
 	cv::Mat src_double;
 	src_gray.convertTo(src_double, CV_64FC1);
-	///这里姑且使用边缘复制法
-	cv::copyMakeBorder(src_double, src_double, R, R, R, R, cv::BORDER_REPLICATE);
+	src_double = src_double / 255;
+	///这里姑且使用边缘复制法，安全起见再多加1个像素点
+	cv::copyMakeBorder(src_double, src_double, R + save_copyBorder,
+	                   R + save_copyBorder, R + save_copyBorder,
+	                   R + save_copyBorder, cv::BORDER_REPLICATE);
 	cv::Mat dst = def_DstMat(rows, cols, n_sample);
 
 	/*               ①→
@@ -44,14 +54,10 @@ PGDClass::calc_PGDFilter(const cv::_InputArray &_src, const cv::_OutputArray &_d
 	 *               ③
 	 */
 	///②计算样本采样坐标偏移量
-	//初始化，计算圆周采样点坐标
+	//初始化，计算【环点】坐标
 	//返回的是Struct_SampleOffsetList结构体
-	Struct_SampleOffsetList struct_sampleOffset{};
-	struct_sampleOffset.arr_SampleOffsetX = new double[n_sample];
-	struct_sampleOffset.arr_SampleOffsetY = new double[n_sample];
-	calc_CircleOffset(struct_sampleOffset, radius, n_sample);
-
-
+	Struct_SampleOffsetList struct_sampleOffset(n_sample);
+	calc_CircleOffset(struct_sampleOffset, n_sample, radius);
 
 	/*                  _____
 	 *                ①|🟥🟥|
@@ -64,14 +70,13 @@ PGDClass::calc_PGDFilter(const cv::_InputArray &_src, const cv::_OutputArray &_d
 	///③计算每一个采样点的二次插值需要的参考权重（这里是N4方法）
 	//初始化，把结果放到一个表里
 	//返回的是Struct_N4InterpList
-	Struct_N4InterpList struct_n4Interp(struct_sampleOffset);
-	calc_N4_QuadraticInterpolationInit(struct_n4Interp, n_sample);
+	Struct_N4InterpList struct_n4Interp(struct_sampleOffset, 0, n2_sample);
+	calc_N4_QuadraticInterpolationInit(struct_n4Interp, n_sample, n2_sample, 0);
 
 	///④遍历全图
 	//这里使用速度稍微快一些的`.ptr<Type>(i)[j]`方法，而且比较安全
-
-
-
+	calc_N4PGD_Traverse(src_double, dst, struct_n4Interp, n_sample, radius,
+	                    radius_2);
 
 	_dst.assign(dst);
 	return dst;
@@ -79,37 +84,43 @@ PGDClass::calc_PGDFilter(const cv::_InputArray &_src, const cv::_OutputArray &_d
 
 /*!
  * @brief 私有函数，创建输出的空矩阵
- *  @brief rows 矩阵的行数
- *  @brief cols 矩阵的列数
- *  @brief n_sample 采样数
+ *  @param rows 矩阵的行数
+ *  @param cols 矩阵的列数
+ *  @param n_sample 采样数
+ *  @note 其实可以定义一个n_bit位的数来帮助减少内存的占用量，但是这不符合CPU的运算逻辑，并且进过调研后发现会极大影响运算速度，因此弃用
  */
 cv::Mat PGDClass::def_DstMat(int rows, int cols, PGD_SampleNums n_sample) {
 	int level_0 = 8 * sizeof(char);
 	int level_1 = 8 * sizeof(short);
 	int level_2 = 8 * sizeof(int);
 	int level_3 = 8 * sizeof(long);
-	if (n_sample <= level_0) return cv::Mat_<uchar>(rows, cols);
-	else if (n_sample <= level_1) return cv::Mat_<unsigned short>(rows, cols);
-	else if (n_sample <= level_2) return cv::Mat_<int>(rows, cols);//32位有符号（位操作时可以忽略符号位）
-	else if (n_sample <= level_3) return cv::Mat_<double>(rows, cols);//虽然是double，但是读写的时候使用的是64位数的性质
+	if (n_sample <= level_0)
+		return cv::Mat_<uchar>(rows, cols);
+	else if (n_sample <= level_1)
+		return cv::Mat_<unsigned short>(rows, cols);
+	else if (n_sample <= level_2)
+		return cv::Mat_<int>(rows, cols); // 32位有符号（位操作时可以忽略符号位）
+	else if (n_sample <= level_3)
+		return cv::Mat_<double>(
+				rows, cols); //虽然是double，但是读写的时候使用的是64位数的性质
 }
-
 
 /*!
  * @brief 计算在目标区域中邻域的n_sample个采样点相对于中心点的偏移量
  *  @param n_sample 采样点个数，有几个采样点就有几个需要计算的偏移量
- *  @param radio 偏移量半径
- *  @param struct_sampleOffset 类内结构体的**引用** Struct_SampleOffsetList（专门存放每个采样点相对于中心处偏移量的结构体）
+ *  @param radius 偏移量半径
+ *  @param struct_sampleOffset 类内结构体的**引用**
+ * Struct_SampleOffsetList（专门存放每个采样点相对于中心处偏移量的结构体）
  *  @return
  */
-void PGDClass::calc_CircleOffset(Struct_SampleOffsetList &struct_sampleOffset, double radio, int n_sample) {
+void PGDClass::calc_CircleOffset(Struct_SampleOffsetList &struct_sampleOffset, int n_sample, double radius) {
 	double theta = 0;
 	int quarter = n_sample / 4;
 	for (int i = 0; i < n_sample; i++) {
 
 		theta = i * 2 * PI / n_sample;
-		struct_sampleOffset.arr_SampleOffsetX[i] = radio * sin(theta);//表示x偏移量
-		struct_sampleOffset.arr_SampleOffsetY[i] = -radio * cos(theta);//表示y偏移量
+		struct_sampleOffset.arr_SampleOffsetX[i] = radius * sin(theta); //表示x偏移量
+		struct_sampleOffset.arr_SampleOffsetY[i] = -radius * cos(theta); //表示y偏移量
 		//调整一下本来就位于x'轴和y'轴上点的坐标，否则会出现非常小的浮点数
 		if (i % quarter == 0) {
 			switch (i / quarter) {
@@ -124,76 +135,82 @@ void PGDClass::calc_CircleOffset(Struct_SampleOffsetList &struct_sampleOffset, d
 			}
 		}
 	}
-	return;
 }
 
-
 /*!
- * @brief 内联函数，N4法二次插值。根据偏移量计算二次线性插值对邻域的权重值，插值参考值来源于样本点
- * 散落的田字格内，即最近的4个像素点。
- * @param struct_n4Interp N4插值法初始信息结构体的**引用**
- * @param n_sample 样本数
- * @return
+ * @brief N4法插值结构体分配函数。
+ * @details 根据偏移量计算【子环点】二次线性插值所需的邻域参考点权重值及邻域参考点相对中心点的偏移量，散落的田字格内，即最近的4个像素点。
+ * @param struct_n4Interp N4插值法初始信息结构体的引用
+ * @param n_sample 【环点】数
+ * @param n2_sample 【子环点】数
+ * @note theta是【中心点】指向【环点】的矢量方向与 ↑ 构成的角度（↑开始的顺时针方向为正）\n
+ * phi是【环点】指向【子环点】的矢量方向与theta构成的角度（theta角开始的顺时针方向为正）
+ * @see calc_N4PGD_Traverse() 在函数calc_N4PGD_Traverse中，采样框是 \f$ (1+2\cdot R) \times (1+2\cdot R) \f$ 大小的矩形框，因此这里的偏移量需要调制，但是调制这一步骤放在后面的遍历函数中
  */
-void
-PGDClass::calc_N4_QuadraticInterpolationInit(Struct_N4InterpList &struct_n4Interp, int n_sample) {
-	ushort x_1 = 0, x_2 = 0, y_1 = 0, y_2 = 0;
+void PGDClass::calc_N4_QuadraticInterpolationInit(Struct_N4InterpList &struct_n4Interp, const int n_sample, const int n2_sample, const double radius_2) {
+	//有n_sample个【环点】，每个【环点】周围有n2_sample个【子环点】
+	short subsample_x_1 = 0, subsample_x_2 = 0, subsample_y_1 = 0, subsample_y_2 = 0;
+	double theta = 0, phi = 0;//theta是【中心点】指向【环点】的矢量角度（↑开始的顺时针方向为正）
+	double step_theta = 2 * PI / n_sample;
+	double step_phi = 2 * PI / n2_sample;
 	double x_i = 0, y_i = 0;
+	double sub_x_ij = 0, sub_y_ij = 0;
 	double dx_1 = 0, dx_2 = 0, dy_1 = 0, dy_2 = 0;
 	double offset_xi = 0, offset_yi = 0;
 	int quarter = n_sample / 4;
+
 	for (int i = 0; i < n_sample; ++i) {
-		x_i = struct_n4Interp.arr_SampleOffsetX[i];
-		y_i = struct_n4Interp.arr_SampleOffsetY[i];
-		x_1 = (u_short) floor(struct_n4Interp.arr_SampleOffsetX[i]);
-		x_2 = (u_short) ceil(struct_n4Interp.arr_SampleOffsetX[i]);
-		y_1 = (u_short) floor(struct_n4Interp.arr_SampleOffsetY[i]);
-		y_2 = (u_short) ceil(struct_n4Interp.arr_SampleOffsetY[i]);
-		/// 如果恰好在x'或y'直线上，那么调制位置，反正计算采样权重的时候其他的都为0
-		if (x_1 == x_2) x_1 = x_2 - 1;
-		if (y_1 == y_2) y_1 = y_2 - 1;
+		x_i = struct_n4Interp.arr_SampleOffsetX[i];//【环点i】相对于【中心点】的偏移量x
+		y_i = struct_n4Interp.arr_SampleOffsetY[i];//【环点i】相对于【中心点】的偏移量y
+		theta += step_theta;
+		phi = theta;
+		for (int j = 0; j < n2_sample; ++j) {
+			phi += step_phi;
+			sub_x_ij = x_i + radius_2 * sin(phi + theta);//【子环点i,j】相对于【中心点】的偏移量x
+			sub_y_ij = y_i - radius_2 * cos(phi + theta);//【子环点i,j】相对于【中心点】的偏移量y
+			///计算子环点附近的四个采样参考点
+			subsample_x_1 = (short) floor(sub_x_ij);
+			subsample_x_2 = (short) ceil(sub_x_ij);
+			subsample_y_1 = (short) floor(sub_y_ij);
+			subsample_y_2 = (short) ceil(sub_y_ij);
+			/// 如果恰好在x'或y'直线上，那么调制位置，反正计算采样权重的时候其他的都为0，而且填充过了不会有问题
+			if (subsample_x_1 == subsample_x_2)
+				subsample_x_1 = subsample_x_2 - 1;
+			if (subsample_y_1 == subsample_y_2)
+				subsample_y_1 = subsample_y_2 - 1;
+			/// 设置【子环点】周边的四个插值参考点的位置，放入Struct_N4InterpList中的【arr_InterpOffsetX】和【arr_InterpOffsetY】
+			struct_n4Interp.arr_InterpOffsetX[i][j][0] = subsample_x_1;//第一个点，左上↖ [1,1]
+			struct_n4Interp.arr_InterpOffsetY[i][j][0] = subsample_y_1;//第一个点，左上↖
+			struct_n4Interp.arr_InterpOffsetX[i][j][1] = subsample_x_2;//第二个点，右上↗ [2,1]
+			struct_n4Interp.arr_InterpOffsetX[i][j][1] = subsample_y_1;//第二个点，右上↗
+			struct_n4Interp.arr_InterpOffsetX[i][j][2] = subsample_x_2;//第三个点，右下↘ [2,2]
+			struct_n4Interp.arr_InterpOffsetX[i][j][2] = subsample_y_2;//第三个点，右下↘
+			struct_n4Interp.arr_InterpOffsetX[i][j][3] = subsample_x_1;//第四个点，左下↙ [1,2]
+			struct_n4Interp.arr_InterpOffsetX[i][j][3] = subsample_y_2;//第四个点，左下↙
 
-		offset_xi = struct_n4Interp.arr_SampleOffsetX[i];
-		offset_yi = struct_n4Interp.arr_SampleOffsetY[i];
-		/// 设置样本点周边的四个参考点的位置，放入Struct_N4InterpList中的【arr_InterpOffsetX】和【arr_InterpOffsetY】
-		//设置第一个点
-		struct_n4Interp.arr_InterpOffsetX[i][0] = x_1;
-		struct_n4Interp.arr_InterpOffsetY[i][0] = y_1;
-		//设置第二个点
-		struct_n4Interp.arr_InterpOffsetX[i][1] = x_2;
-		struct_n4Interp.arr_InterpOffsetY[i][1] = y_1;
-		//设置第三个点
-		struct_n4Interp.arr_InterpOffsetX[i][2] = x_2;
-		struct_n4Interp.arr_InterpOffsetY[i][2] = y_2;
-		//设置第四个点
-		struct_n4Interp.arr_InterpOffsetX[i][3] = x_1;
-		struct_n4Interp.arr_InterpOffsetY[i][3] = y_2;
+			///设置【子环点】周边插值参考点的二次插值比重，放入Struct_N4InterpList中的【arr_InterpWeight】
+			//      ①  ↑             ②
+			//          |dy_1
+			//  dx_1←—®——————→dx_2
+			//          |
+			//          |dy_2
+			//      ④  ↓             ③
+			dx_1 = sub_x_ij - subsample_x_1;
+			dx_2 = subsample_x_2 - sub_x_ij;
+			dy_1 = sub_y_ij - subsample_y_1;
+			dy_2 = subsample_y_2 - sub_y_ij;
 
+			struct_n4Interp.arr_InterpWeight[i][j][0] = dx_2 * dy_2;
+			struct_n4Interp.arr_InterpWeight[i][j][1] = dx_1 * dy_2;
+			struct_n4Interp.arr_InterpWeight[i][j][2] = dx_1 * dy_1;
+			struct_n4Interp.arr_InterpWeight[i][j][3] = dx_2 * dy_1;
+		}
 
-		///设置样本周边点的二次插值比重，放入放入Struct_N4InterpList中的【arr_InterpWeight】
-		//      ①  ↑             ②
-		//          |dy_1
-		//  dx_1←—®——————→dx_2
-		//          |
-		//          |dy_2
-		//      ④  ↓             ③
-		//
-		dx_1 = x_i - x_1;
-		dx_2 = x_2 - x_i;
-		dy_1 = y_i - y_1;
-		dy_2 = y_2 - y_i;
-		struct_n4Interp.arr_InterpWeight[i][0] = dx_2 * dy_2;
-		struct_n4Interp.arr_InterpWeight[i][1] = dx_1 * dy_2;
-		struct_n4Interp.arr_InterpWeight[i][2] = dx_1 * dy_1;
-		struct_n4Interp.arr_InterpWeight[i][3] = dx_2 * dy_1;
 
 	}
-	return;
 }
 
-void
-PGDClass::calc_N9_QuadraticInterpolationInit(PGDClass::Struct_N9InterpList &struct_n9Interp, int n_sample) {
-}
+void PGDClass::calc_N9_QuadraticInterpolationInit(PGDClass::Struct_N9InterpList &struct_n9Interp, int n_sample) {}
 
 /*!
  * @brief calc_N4PGD_Traverse 通过N4方法插值遍历全图
@@ -203,26 +220,82 @@ PGDClass::calc_N9_QuadraticInterpolationInit(PGDClass::Struct_N9InterpList &stru
  * @param n_sample 要获取的样本点数
  * @param r1 采样圆的半径
  * @param r2 邻域样本点周围的LBP计算范围
- * @note 这里采用了指针索引法，速度可能不是很快，但是比at<Type>(x,y)随机读写的速度快
+ * @note
+ * 这里采用了指针索引法，速度可能不是很快，但是比at<Type>(x,y)随机读写的速度快
+ * @todo 数据类型必须是double类型，之前还存在准备措施不够的情况，需要严加规范。
  */
-void
-PGDClass::calc_N4PGD_Traverse(const cv::Mat &src, cv::Mat &PGD_Data,
-                              Struct_N4InterpList struct_n4Interp, int n_sample,
-                              double r1,
-                              double r2) {
+void PGDClass::calc_N4PGD_Traverse(const cv::Mat &src, cv::Mat &PGD_Data,
+                                   Struct_N4InterpList struct_n4Interp,
+                                   const int n_sample, const double r1, const double r2) {
 	//输入的图像一般是拓展过的图像，因此可以直接从初始的（0，0）开始遍历
-	int R = (int) ceil(r1 + r2);
-	if (src.isContinuous()){
+	int n2_sample = n_sample; //设置的【子环点】个数，这里暂且设置为与n_sample相等。
+	int rows = src.rows;
+	int cols = src.cols;
+	int R = (int) ceil(r1 + r2); // R 是偏移量，[0. R-1]以及[rows-R,rows-1]行都不是，列同理
+	int len_win = 1 + 2 * R; //滑框窗口大小
+	//这里使用了行指针，因此没有必要检查Mat变量是否连续。
+	//并且这里一定是double类型的数据，数据类型在前面需要做好规范措施
+	double *row_ptr[1 + 2 * R];
+	for (int i = R + save_copyBorder; i < rows - R - save_copyBorder; ++i) { //[R,rows-1-R]
+		///放置采样的行指针
+		for (int t = 0; t < len_win; ++t) {
+			row_ptr[t] = (double *) src.ptr(i + t);
+		}
+		///遍历当前行，同时提取周边 2*R 个行的信息
+		//每一行的列范围是[R , cols -R -1]
+		for (int j = R + save_copyBorder; j < cols - R - save_copyBorder; ++j) {
+			///这里开始是每一个像素点的运算，由事先建立好的索引值计算
+			//针对不同个数的n2_sample，可以采用不同的长度的变量存放 G 结果，
+			//这里通过事先定义好的PGD_Data类型来定义存放G结果的类型
+			//直接使用64位的数作为temp
+			int64_t temp = 0;
+			//计算每个【子环点】的二次插值
+			for (int k = 0; k < n2_sample; ++k) {
 
+			}
+		}
 	}
 }
 
 
 /*!
- * @brief 结构体Struct_N4InterpList的初始化函数，通过继承上一个实例来获取样本点偏移量属性
+ * @brief Struct_SampleOffsetList构造函数
+ * @param n_sample 【环点】数
+ */
+PGDClass::Struct_SampleOffsetList::Struct_SampleOffsetList(int n_sample) {
+	this->arr_SampleOffsetX = new double[n_sample];
+	this->arr_SampleOffsetY = new double[n_sample];
+}
+
+/*!
+ * @brief 默认构造函数
+ */
+PGDClass::Struct_SampleOffsetList::Struct_SampleOffsetList() = default;
+
+/*!
+ * @brief Struct_N4InterpList构造函数，分配Struct_N4InterpList结构体
+ * 结构体Struct_N4InterpList的初始化函数，通过继承上一个实例来获取样本点偏移量属性
  * @param list 父类实例
  */
-PGDClass::Struct_N4InterpList::Struct_N4InterpList(PGDClass::Struct_SampleOffsetList list) : Struct_SampleOffsetList() {
+PGDClass::Struct_N4InterpList::Struct_N4InterpList(Struct_SampleOffsetList list, const int n_sample, const int n2_sample) : Struct_SampleOffsetList(n_sample) {
+	//把父类存放进来
 	this->arr_SampleOffsetX = list.arr_SampleOffsetX;
 	this->arr_SampleOffsetY = list.arr_SampleOffsetY;
+	//根据n_sample的个数以及n2_sample的个数初始化数组
+	this->arr_InterpWeight = new double **[n_sample];
+	this->arr_InterpOffsetX = new short **[n_sample];
+	this->arr_InterpOffsetY = new short **[n_sample];
+	for (int i = 0; i < n_sample; ++i) {
+		this->arr_InterpWeight[i] = new double *[n2_sample];
+		this->arr_InterpOffsetX[i] = new short *[n2_sample];
+		this->arr_InterpOffsetY[i] = new short *[n2_sample];
+		for (int j = 0; j < 4; ++j) {
+			this->arr_InterpWeight[i][j] = new double[4];
+			this->arr_InterpOffsetX[i][j] = new short[4];
+			this->arr_InterpOffsetY[i][j] = new short[4];
+		}
+	}
 }
+
+
+PGDClass::Struct_N9InterpList::Struct_N9InterpList(const int nSample) : Struct_SampleOffsetList(nSample) {}
