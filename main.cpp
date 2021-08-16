@@ -14,7 +14,7 @@ int main(int argc, char *argv[]) {
 	path_project = cd(path_project, "..");
 	path_project = cd(path_project, "..");
 
-	string src_pathname = "data/Kamisato.jpeg";
+	string src_pathname = "data/Kamisato.jpg";
 	cv::Mat img_origin = cv::imread(path_project + "/" + src_pathname);
 	if (img_origin.empty()) std::cout << "没有载入图像" << std::endl;
 	else std::cout << "载入成功" << std::endl;
@@ -22,7 +22,9 @@ int main(int argc, char *argv[]) {
 	cv::Mat pgd_result;
 
 
-	PGDClass::calc_PGDFilter(img_origin, pgd_result, PGDClass::PGD_SampleNums_8, 2, n_sample, 1);
+	PGDClass::calc_PGDFilter(img_origin, pgd_result,
+	                         PGDClass::PGD_SampleNums_4, 2,
+	                         PGDClass::PGD_SampleNums_4, 1);
 }
 
 /*!

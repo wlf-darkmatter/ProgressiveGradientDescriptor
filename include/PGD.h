@@ -24,6 +24,7 @@
  */
 class PGDClass {
 public:
+
 	static const int save_copyBorder = 1;//安全起见对图像对边缘多加的一个保护壳
 	enum PGD_SampleNums {
 		PGD_SampleNums_SameAs_N_Sample = 0,///< 设置n2_sample的个数，默认与n_sample相等
@@ -45,7 +46,9 @@ public:
 	struct Struct_SampleOffsetList {
 		explicit Struct_SampleOffsetList(int n_sample);///<创建一个记录具有n_sample个【环点】的样本结构体
 		Struct_SampleOffsetList();///<缺省构造函数，什么也不做
+		~Struct_SampleOffsetList();
 
+		int n_sample = 0;
 		double *arr_SampleOffsetX{};///< double类型指针，记录第i个【环点】的**x**偏移量;
 		double *arr_SampleOffsetY{};///< double类型指针，记录第i个【环点】的**y**偏移量;
 	};
@@ -59,6 +62,9 @@ public:
 	 */
 	struct Struct_N4InterpList : Struct_SampleOffsetList {
 		explicit Struct_N4InterpList(Struct_SampleOffsetList list, int n_sample, int n2_sample);///< 利用父类来初始化该结构体
+		~Struct_N4InterpList();///<析构函数
+		
+		int n2_sample;
 		double ***arr_InterpWeight;///<存放权重的指针，指向[n_sample][n2_sample][4]的三维数组
 		short ***arr_InterpOffsetX;///<存放每个采样点插值所需的参考点相对于中心点的X偏移量
 		short ***arr_InterpOffsetY;///<存放每个采样点插值所需的参考点相对于中心点的Y偏移量
@@ -70,6 +76,8 @@ public:
 	 */
 	struct Struct_N9InterpList : Struct_SampleOffsetList {
 		explicit Struct_N9InterpList(int nSample);
+
+		~Struct_N9InterpList();
 
 		double arr_InterpWeight[32][9];///<存放权重的数组
 		short arr_InterpOffsetX[32][9];///<存放每个采样点插值所需的参考点相对于中心点的X偏移量
@@ -92,16 +100,16 @@ private:
 	static inline void calc_CircleOffset(Struct_SampleOffsetList &struct_sampleOffset, int n_sample, double radius);
 
 	static void
-	calc_N4_QuadraticInterpolationInit(Struct_N4InterpList &struct_n4Interp, const int n_sample, const int n2_sample, const double radius_2);
+	calc_N4_QuadraticInterpolationInit(Struct_N4InterpList &struct_n4Interp, int n_sample, int n2_sample, double radius_2);
 
 	static inline void
 	calc_N9_QuadraticInterpolationInit(Struct_N9InterpList &struct_n9Interp, int n_sample);
 
 	static void
 	calc_N4PGD_Traverse(const cv::Mat &src, cv::Mat &PGD_Data,
-	                    Struct_N4InterpList struct_n4Interp, const int n_sample,
-	                    const double r1,
-	                    const double r2);
+	                    Struct_N4InterpList struct_n4Interp,
+	                    int n_sample, double r1,
+	                    int n2_sample, double r2);
 
 
 };
