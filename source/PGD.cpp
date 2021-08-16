@@ -38,8 +38,7 @@ cv::Mat PGDClass::calc_PGDFilter(const cv::_InputArray &_src,
 	//如果是三通道，使用灰度图像
 	if (_src.channels() == 3) {
 		cv::cvtColor(_src, src_gray, cv::COLOR_BGR2GRAY, 0);
-	} else
-		src_gray = _src.getMat();
+	} else src_gray = _src.getMat();
 	///一律使用double类型，同时对边缘进行填充
 	cv::Mat src_double;
 	src_gray.convertTo(src_double, CV_64FC1);
@@ -356,10 +355,10 @@ PGDClass::Struct_SampleOffsetList::Struct_SampleOffsetList(int n_sample) {
 	this->arr_SampleOffsetY = new double[n_sample];
 }
 
-PGDClass::Struct_SampleOffsetList::~Struct_SampleOffsetList() {
-	delete[] this->arr_SampleOffsetX;
-	delete[] this->arr_SampleOffsetY;
-}
+//PGDClass::Struct_SampleOffsetList::~Struct_SampleOffsetList() {
+//	delete[] this->arr_SampleOffsetX;
+//	delete[] this->arr_SampleOffsetY;
+//}
 
 /*!
  * @brief 默认构造函数
@@ -393,24 +392,24 @@ PGDClass::Struct_N4InterpList::Struct_N4InterpList(Struct_SampleOffsetList list,
 	}
 }
 
-PGDClass::Struct_N4InterpList::~Struct_N4InterpList() {
-	//不释放基类
-	for (int i = 0; i < n_sample; ++i) {
-		for (int j = 0; j < n2_sample; ++j) {
-			delete[] this->arr_InterpWeight[i][j];
-			delete[] this->arr_InterpOffsetX[i][j];
-			delete[] this->arr_InterpOffsetY[i][j];
-		}
-		delete[] this->arr_InterpWeight[i];
-		delete[] this->arr_InterpOffsetX[i];
-		delete[] this->arr_InterpOffsetY[i];
-	}
-	delete[] this->arr_InterpWeight;
-	delete[] this->arr_InterpOffsetX;
-	delete[] this->arr_InterpOffsetY;
-}
+//PGDClass::Struct_N4InterpList::~Struct_N4InterpList() {
+//	//不释放基类
+//	for (int i = 0; i < n_sample; ++i) {
+//		for (int j = 0; j < n2_sample; ++j) {
+//			delete[] this->arr_InterpWeight[i][j];
+//			delete[] this->arr_InterpOffsetX[i][j];
+//			delete[] this->arr_InterpOffsetY[i][j];
+//		}
+//		delete[] this->arr_InterpWeight[i];
+//		delete[] this->arr_InterpOffsetX[i];
+//		delete[] this->arr_InterpOffsetY[i];
+//	}
+//	delete[] this->arr_InterpWeight;
+//	delete[] this->arr_InterpOffsetX;
+//	delete[] this->arr_InterpOffsetY;
+//}
 
 
 PGDClass::Struct_N9InterpList::Struct_N9InterpList(const int nSample) : Struct_SampleOffsetList(nSample) {}
 
-PGDClass::Struct_N9InterpList::~Struct_N9InterpList() {}
+//PGDClass::Struct_N9InterpList::~Struct_N9InterpList() {}
