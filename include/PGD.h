@@ -24,7 +24,6 @@
  */
 class PGDClass {
 public:
-
 	static const int save_copyBorder = 1;//安全起见对图像对边缘多加的一个保护壳
 	enum PGD_SampleNums {
 		PGD_SampleNums_SameAs_N_Sample = 0,///< 设置n2_sample的个数，默认与n_sample相等
@@ -38,19 +37,31 @@ public:
 	};
 
 	/*!
+	 * @struct Struct_PGD
+	 * @brief 对外调用接口
+	 * @details 每一组都有n_sample个元素
+	 */
+	struct Struct_PGD {
+		typedef cv::Vec<double, 5> Vec5d;
+		cv::Mat M = cv::Mat::zeros(2, 3, CV_64FC(5));
+	};
+
+	/*!
 	 * @struct Struct_SampleOffsetList
 	 * @brief 存放采样点相对于参考中心偏移量的结构体，由于只需要比较采样点周围邻域的最大相关排列，
 	 * 因此不需要对采样点本身进行二次线性插值
 	 * @details 每一组都有n_sample个元素
 	 */
 	struct Struct_SampleOffsetList {
-		explicit Struct_SampleOffsetList(int n_sample);///<创建一个记录具有n_sample个【环点】的样本结构体
+		explicit Struct_SampleOffsetList(int _n_sample, double _r1);///<创建一个记录具有n_sample个【环点】的样本结构体
 		Struct_SampleOffsetList();///<缺省构造函数，什么也不做
-//		~Struct_SampleOffsetList();
+		virtual ~Struct_SampleOffsetList();
 
+		int count = 0;
 		int n_sample = 0;
-		double *arr_SampleOffsetX{};///< double类型指针，记录第i个【环点】的**x**偏移量;
-		double *arr_SampleOffsetY{};///< double类型指针，记录第i个【环点】的**y**偏移量;
+		double r1 = 0;
+		double *arr_SampleOffsetX = nullptr;///< double类型指针，记录第i个【环点】的**x**偏移量;
+		double *arr_SampleOffsetY = nullptr;///< double类型指针，记录第i个【环点】的**y**偏移量;
 	};
 
 	/*!
@@ -61,10 +72,11 @@ public:
 	 * arr_InterpWeight
 	 */
 	struct Struct_N4InterpList : Struct_SampleOffsetList {
-		explicit Struct_N4InterpList(Struct_SampleOffsetList list, int n_sample, int n2_sample);///< 利用父类来初始化该结构体
-		//~Struct_N4InterpList();///<析构函数
-
+		Struct_N4InterpList(int _n_sample, double _r1, int _n2_sample, double _r2);///< 构造函数
+		~Struct_N4InterpList() override;///<析构函数
+		int count2 = 0;
 		int n2_sample;
+		double r2 = 0;
 		double ***arr_InterpWeight;///<存放权重的指针，指向[n_sample][n2_sample][4]的三维数组
 		short ***arr_InterpOffsetX;///<存放每个采样点插值所需的参考点相对于中心点的X偏移量
 		short ***arr_InterpOffsetY;///<存放每个采样点插值所需的参考点相对于中心点的Y偏移量
@@ -75,7 +87,7 @@ public:
 	 * @brief 继承自Struct_SampleOffsetList，包含有通过N9方法插值的必要列表，避免后续算法中不断重复计算该值
 	 */
 	struct Struct_N9InterpList : Struct_SampleOffsetList {
-		explicit Struct_N9InterpList(int nSample);
+		explicit Struct_N9InterpList(int n_Sample);
 
 		//~Struct_N9InterpList();
 
@@ -100,16 +112,13 @@ private:
 	static inline void calc_CircleOffset(Struct_SampleOffsetList &struct_sampleOffset, int n_sample, double radius);
 
 	static void
-	calc_N4_QuadraticInterpolationInit(Struct_N4InterpList &struct_n4Interp, int n_sample, int n2_sample, double radius_2);
+	calc_N4_QuadraticInterpolationInit(Struct_N4InterpList &struct_n4Interp);
 
 	static inline void
 	calc_N9_QuadraticInterpolationInit(Struct_N9InterpList &struct_n9Interp, int n_sample);
 
 	static void
-	calc_N4PGD_Traverse(const cv::Mat &src, cv::Mat &PGD_Data,
-	                    Struct_N4InterpList struct_n4Interp,
-	                    int n_sample, double r1,
-	                    int n2_sample, double r2);
+	calc_N4PGD_Traverse(const cv::Mat &src, cv::Mat &PGD_Data, const Struct_N4InterpList &struct_n4Interp);
 
 
 };

@@ -23,8 +23,8 @@ int main(int argc, char *argv[]) {
 
 
 	PGDClass::calc_PGDFilter(img_origin, pgd_result,
-	                         PGDClass::PGD_SampleNums_4, 2,
-	                         PGDClass::PGD_SampleNums_4, 1);
+	                         PGDClass::PGD_SampleNums_8, 2,
+	                         PGDClass::PGD_SampleNums_8, 1);
 }
 
 /*!

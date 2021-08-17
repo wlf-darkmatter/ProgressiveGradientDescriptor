@@ -4,6 +4,8 @@
 #define PI 3.1415926535897932384626433832795028841971
 #define __PGD_DEBUG 0
 
+int id = 0;
+
 /*!
  * @brief calc_PGDFilter()函数，根据给定的圆周大小计算n_sample个【环点】的方向不变特征
  * @param _src 输入的矩阵
@@ -58,11 +60,11 @@ cv::Mat PGDClass::calc_PGDFilter(const cv::_InputArray &_src,
 	 *                      ↓
 	 *               ③
 	 */
-	///②计算样本采样坐标偏移量
+	///②计算样本采样坐标偏移量————这一步已经放在了struct_n4Interp的构造函数中，避免内存重复释放
 	//初始化，计算【环点】坐标
 	//返回的是Struct_SampleOffsetList结构体
-	Struct_SampleOffsetList struct_sampleOffset(n_sample);
-	calc_CircleOffset(struct_sampleOffset, n_sample, radius);
+	//Struct_SampleOffsetList struct_sampleOffset(n_sample);
+	//calc_CircleOffset(struct_sampleOffset, n_sample, radius);
 
 	/*                  _____
 	 *                ①|🟥🟥|
@@ -75,14 +77,12 @@ cv::Mat PGDClass::calc_PGDFilter(const cv::_InputArray &_src,
 	///③计算每一个采样点的二次插值需要的参考权重（这里是N4方法）
 	//初始化，把结果放到一个表里
 	//返回的是Struct_N4InterpList
-	Struct_N4InterpList struct_n4Interp(struct_sampleOffset, n_sample, n2_sample);
-	calc_N4_QuadraticInterpolationInit(struct_n4Interp, n_sample, n2_sample, radius_2);
+	Struct_N4InterpList struct_n4Interp(n_sample, radius, n2_sample, radius_2);
+	calc_N4_QuadraticInterpolationInit(struct_n4Interp);
 
 	///④遍历全图
 	//这里使用速度稍微快一些的`.ptr<Type>(i)[j]`方法，而且比较安全
-	calc_N4PGD_Traverse(src_double, dst, struct_n4Interp, n_sample,
-	                    radius, 0,
-	                    radius_2);
+	calc_N4PGD_Traverse(src_double, dst, struct_n4Interp);
 
 	_dst.assign(dst);
 	return dst;
@@ -157,7 +157,13 @@ void PGDClass::calc_CircleOffset(Struct_SampleOffsetList &struct_sampleOffset, i
  * phi是【环点】指向【子环点】的矢量方向与theta构成的角度（theta角开始的顺时针方向为正）
  * @see calc_N4PGD_Traverse() 在函数calc_N4PGD_Traverse中，采样框是 \f$ (1+2\cdot R) \times (1+2\cdot R) \f$ 大小的矩形框，因此这里的偏移量需要调制，但是调制这一步骤放在后面的遍历函数中
  */
-void PGDClass::calc_N4_QuadraticInterpolationInit(Struct_N4InterpList &struct_n4Interp, int n_sample, int n2_sample, double radius_2) {
+void PGDClass::calc_N4_QuadraticInterpolationInit(Struct_N4InterpList &struct_n4Interp) {
+
+
+	int n_sample = struct_n4Interp.n_sample;
+	int n2_sample = struct_n4Interp.n2_sample;
+	double radius_2 = struct_n4Interp.r2;
+
 	//有n_sample个【环点】，每个【环点】周围有n2_sample个【子环点】
 	short subsample_x_1 = 0, subsample_x_2 = 0, subsample_y_1 = 0, subsample_y_2 = 0;
 	double theta = 0, phi = 0;//theta是【中心点】指向【环点】的矢量角度（↑开始的顺时针方向为正）
@@ -240,10 +246,11 @@ void PGDClass::calc_N9_QuadraticInterpolationInit(PGDClass::Struct_N9InterpList 
  * 这里采用了指针索引法，速度可能不是很快，但是比at<Type>(x,y)随机读写的速度快
  * @todo 数据类型必须是double类型，之前还存在准备措施不够的情况，需要严加规范。
  */
-void PGDClass::calc_N4PGD_Traverse(const cv::Mat &src, cv::Mat &PGD_Data,
-                                   Struct_N4InterpList struct_n4Interp,
-                                   int n_sample, double r1,
-                                   int n2_sample, double r2) {
+void PGDClass::calc_N4PGD_Traverse(const cv::Mat &src, cv::Mat &PGD_Data, const Struct_N4InterpList &struct_n4Interp) {
+	int n_sample = struct_n4Interp.n_sample;
+	int n2_sample = struct_n4Interp.n2_sample;
+	double r1 = struct_n4Interp.r1;
+	double r2 = struct_n4Interp.r2;
 	//输入的图像一般是拓展过的图像，因此可以直接从初始的（0，0）开始遍历
 	int rows = src.rows;
 	int cols = src.cols;
@@ -348,68 +355,87 @@ void PGDClass::calc_N4PGD_Traverse(const cv::Mat &src, cv::Mat &PGD_Data,
 
 /*!
  * @brief Struct_SampleOffsetList构造函数
- * @param n_sample 【环点】数
+ * @param _n_sample 【环点】数
+ * @param _r1 【环点】半径
  */
-PGDClass::Struct_SampleOffsetList::Struct_SampleOffsetList(int n_sample) {
-	this->arr_SampleOffsetX = new double[n_sample];
-	this->arr_SampleOffsetY = new double[n_sample];
+PGDClass::Struct_SampleOffsetList::Struct_SampleOffsetList(int _n_sample, double _r1) {
+	id++;
+	count = id;
+	std::cout << "Struct_SampleOffsetList被调用了,代号：" << count << std::endl;
+	this->n_sample = _n_sample;
+	this->r1 = _r1;
+	this->arr_SampleOffsetX = new double[(unsigned long) n_sample];
+	this->arr_SampleOffsetY = new double[(unsigned long) n_sample];
 }
-
-//PGDClass::Struct_SampleOffsetList::~Struct_SampleOffsetList() {
-//	delete[] this->arr_SampleOffsetX;
-//	delete[] this->arr_SampleOffsetY;
-//}
 
 /*!
  * @brief 默认构造函数
  */
-PGDClass::Struct_SampleOffsetList::Struct_SampleOffsetList() = default;
+PGDClass::Struct_SampleOffsetList::Struct_SampleOffsetList() {
+	id++;
+	count = id;
+	std::cout << "正在调用Struct_SampleOffsetList,代号：" << count << std::endl;
+};
+
+PGDClass::Struct_SampleOffsetList::~Struct_SampleOffsetList() {
+	std::cout << "正在释放Struct_SampleOffsetList,代号：" << count << std::endl;
+	delete[] this->arr_SampleOffsetX;
+	delete[] this->arr_SampleOffsetY;
+}
+
 
 /*!
  * @brief Struct_N4InterpList构造函数，分配Struct_N4InterpList结构体
  * 结构体Struct_N4InterpList的初始化函数，通过继承上一个实例来获取样本点偏移量属性
- * @param list 父类实例
+ * @param _n_sample 【环点】个数
+ * @param _r1 【环点】半径
+ * @param _n2_sample 【子环点】个数
+ * @param _r2 【子环点】半径
  */
-PGDClass::Struct_N4InterpList::Struct_N4InterpList(Struct_SampleOffsetList list, int n_sample, int n2_sample) : Struct_SampleOffsetList(n_sample) {
-	//把父类存放进来
-	this->n_sample = n_sample;
-	this->n2_sample = n2_sample;
-	this->arr_SampleOffsetX = list.arr_SampleOffsetX;
-	this->arr_SampleOffsetY = list.arr_SampleOffsetY;
+PGDClass::Struct_N4InterpList::Struct_N4InterpList(int _n_sample, double _r1, int _n2_sample, double _r2) : Struct_SampleOffsetList(_n_sample, _r1) {
+	++id;
+	count2 = id;
+
+	std::cout << "正在调用Struct_N4InterpList,的显式构造函数,代号：" << count2 << std::endl;
+	this->r2 = _r2;
+	this->n2_sample = _n2_sample;
 	//根据n_sample的个数以及n2_sample的个数初始化数组
-	this->arr_InterpWeight = new double **[n_sample];
-	this->arr_InterpOffsetX = new short **[n_sample];
-	this->arr_InterpOffsetY = new short **[n_sample];
+	this->arr_InterpWeight = new double **[(unsigned long) n_sample];
+	this->arr_InterpOffsetX = new short **[(unsigned long) n_sample];
+	this->arr_InterpOffsetY = new short **[(unsigned long) n_sample];
 	for (int i = 0; i < n_sample; ++i) {
-		this->arr_InterpWeight[i] = new double *[n2_sample];
-		this->arr_InterpOffsetX[i] = new short *[n2_sample];
-		this->arr_InterpOffsetY[i] = new short *[n2_sample];
+		this->arr_InterpWeight[i] = new double *[(unsigned long) n2_sample];
+		this->arr_InterpOffsetX[i] = new short *[(unsigned long) n2_sample];
+		this->arr_InterpOffsetY[i] = new short *[(unsigned long) n2_sample];
 		for (int j = 0; j < n2_sample; ++j) {
 			this->arr_InterpWeight[i][j] = new double[4];
 			this->arr_InterpOffsetX[i][j] = new short[4];
 			this->arr_InterpOffsetY[i][j] = new short[4];
 		}
 	}
+
 }
 
-//PGDClass::Struct_N4InterpList::~Struct_N4InterpList() {
-//	//不释放基类
-//	for (int i = 0; i < n_sample; ++i) {
-//		for (int j = 0; j < n2_sample; ++j) {
-//			delete[] this->arr_InterpWeight[i][j];
-//			delete[] this->arr_InterpOffsetX[i][j];
-//			delete[] this->arr_InterpOffsetY[i][j];
-//		}
-//		delete[] this->arr_InterpWeight[i];
-//		delete[] this->arr_InterpOffsetX[i];
-//		delete[] this->arr_InterpOffsetY[i];
-//	}
-//	delete[] this->arr_InterpWeight;
-//	delete[] this->arr_InterpOffsetX;
-//	delete[] this->arr_InterpOffsetY;
-//}
+PGDClass::Struct_N4InterpList::~Struct_N4InterpList() {
+	std::cout << "正在释放Struct_N4InterpList，代号：" << count2;
+	std::cout << "。   该对象中包含的基类代码为：" << count << std::endl;
+	//不释放基类
+	for (int i = 0; i < n_sample; ++i) {
+		for (int j = 0; j < n2_sample; ++j) {
+			delete[] this->arr_InterpWeight[i][j];
+			delete[] this->arr_InterpOffsetX[i][j];
+			delete[] this->arr_InterpOffsetY[i][j];
+		}
+		delete[] this->arr_InterpWeight[i];
+		delete[] this->arr_InterpOffsetX[i];
+		delete[] this->arr_InterpOffsetY[i];
+	}
+	delete[] this->arr_InterpWeight;
+	delete[] this->arr_InterpOffsetX;
+	delete[] this->arr_InterpOffsetY;
+}
 
 
-PGDClass::Struct_N9InterpList::Struct_N9InterpList(const int nSample) : Struct_SampleOffsetList(nSample) {}
+PGDClass::Struct_N9InterpList::Struct_N9InterpList(int n_Sample) {
 
-//PGDClass::Struct_N9InterpList::~Struct_N9InterpList() {}
+}
