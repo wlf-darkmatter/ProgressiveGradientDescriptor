@@ -117,6 +117,7 @@ void PGDClass_::calc_N4PGD_Traverse(const cv::Mat &src, cv::Mat &PGD_Data, const
 			break;
 		default:
 			printf("出现异常，没有正确指定的写入函数\n");
+			break;
 	}
 
 
@@ -580,11 +581,13 @@ PGDClass_::Struct_N9InterpList::Struct_N9InterpList(int n_Sample) {
  * @param _n2_sample 【子环点】个数
  */
 PGDClass_::Struct_PGD::Struct_PGD(int _rows, int _cols, PGD_SampleNums _n_sample, PGD_SampleNums _n2_sample) {
-	rows = _rows;
-	cols = _cols;
 	n_sample = _n_sample;
 	n2_sample = _n2_sample;
-	PGD = def_DstMat(rows, cols, _n_sample, PGD_SampleNums_SameAs_N_Sample);
+	PGD = def_DstMat(_rows, _cols, _n_sample, PGD_SampleNums_SameAs_N_Sample);
+	rows = _rows;
+	cols = _cols;
+	step_0 = PGD.step[0];
+	step_1 = PGD.step[1];
 }
 
 /*!
@@ -599,4 +602,6 @@ PGDClass_::Struct_PGD::Struct_PGD(cv::Mat &_src, PGD_SampleNums _n_sample, PGD_S
 	PGD = def_DstMat(_src.rows, _src.cols, _n_sample, _n2_sample);
 	rows = PGD.rows;
 	cols = PGD.cols;
+	step_0 = PGD.step[0];
+	step_1 = PGD.step[1];
 }

@@ -32,6 +32,15 @@ int main(int argc, char *argv[]) {
 	time_count_end = clock();
 	cout << "遍历运行时间为： " << (double) (time_count_end - time_count_start) / CLOCKS_PER_SEC << " s" << endl;
 
+
+	///读取数据
+	cout << "第111行，222列的G值分别为" << endl;
+	uint16_t G = 0;
+	for (int i = 0; i < 8; ++i) {
+		G = struct_PGD.PGD_read<uint16_t>(111, 222, i);
+		cout << G << " ";
+	}
+	cout << endl;
 }
 
 /*!

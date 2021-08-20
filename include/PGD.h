@@ -26,9 +26,6 @@
  * @note 每个子环电都是由二次线性插值来计算的，通过获取周边的田字格内四或九个像素值来插值计算，\n
  * @note 为了优化运算，事先计算子环点的四个或九个插值参考点相对于中心点的偏移量以及插值权重
  */
-
-
-
 class PGDClass_ {
 public:
 	enum PGD_SampleNums {
@@ -49,10 +46,12 @@ public:
 	 * @note 数据类型只有4种，【8位】【16位】【32位】【64位】，该值由n2_sample决定
 	 * 图像有n_sample个通道，即每一个【子环点】的G值占用一个通道
 	 */
-
 	struct Struct_PGD {
 		int rows = 0;///<行数
 		int cols = 0;///<列数
+		uchar *data_start = nullptr;
+		size_t step_0 = 0;
+		size_t step_1 = 0;
 		PGD_SampleNums n_sample = PGD_SampleNums_SameAs_N_Sample;
 		PGD_SampleNums n2_sample = PGD_SampleNums_SameAs_N_Sample;
 		cv::Mat PGD;///<数据结果
@@ -61,6 +60,22 @@ public:
 
 		Struct_PGD(cv::Mat &_src, PGD_SampleNums _n_sample, PGD_SampleNums _n2_sample);
 
+		template<typename T>
+		T PGD_read(int row, int col, int channel) {
+			return *reinterpret_cast<T *>(PGD.data + step_0 * row + step_1 * col + channel * sizeof(T));
+		}
+
+//		uint16_t PGD_read<uint16_t>(int row, int col, int channel) {
+//			return reinterpret_cast<uint16_t>(PGD.data + step_0 * row + step_1 * col + channel * 2);
+//		}
+//
+//		uint32_t PGD_read<uint32_t>(int row, int col, int channel) {
+//			return reinterpret_cast<uint32_t>(PGD.data + step_0 * row + step_1 * col + channel * 4);
+//		}
+//
+//		uint64_t PGD_read<uint64_t>(int row, int col, int channel) {
+//			return reinterpret_cast<uint32_t>(PGD.data + step_0 * row + step_1 * col + channel * 8);
+//		}
 	};
 
 	/*!
