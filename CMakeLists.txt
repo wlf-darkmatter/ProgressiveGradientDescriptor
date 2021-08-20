@@ -8,19 +8,25 @@ set(OpenCv_LIBS
         opencv_core
         opencv_highgui
         opencv_imgproc
-        opencv_imgcodecs)
-
+        opencv_imgcodecs
+        )
+# 设置opencv路径
+set(OpenCv_path
+        /opt/homebrew/Cellar/opencv/4.5.4_4
+        )
 include_directories(.)
 include_directories(include)
 include_directories(source)
-include_directories(/opt/homebrew/Cellar/opencv/4.5.3_1/include/opencv4)
+include_directories(${OpenCv_path}/include/opencv4)
 
 link_directories(
-        /opt/homebrew/Cellar/opencv/4.5.3_1/lib
+        ${OpenCv_path}/lib
 )
+
 add_executable(ProgressiveGradientDescriptor
         source/PGD.cpp
-        main.cpp include/PGD.h)
+        include/PGD.h
+        main.cpp)
 
 target_link_libraries(ProgressiveGradientDescriptor ${OpenCv_LIBS}
         )
