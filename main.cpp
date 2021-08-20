@@ -10,21 +10,28 @@ string cd(const string &_current_path, const string &str_cd);
 
 int main(int argc, char *argv[]) {
 	string path_project(*argv);
+	clock_t time_count_start = 0;
+	clock_t time_count_end = 0;
 	//获取上一级的目录
 	path_project = cd(path_project, "..");
 	path_project = cd(path_project, "..");
 
 	string src_pathname = "data/Kamisato.jpg";
 	cv::Mat img_origin = cv::imread(path_project + "/" + src_pathname);
+	std::cout << "输入图像原长度为 " << img_origin.rows << "行, " << img_origin.cols << " 列." << std::endl;
 	if (img_origin.empty()) std::cout << "没有载入图像" << std::endl;
 	else std::cout << "载入成功" << std::endl;
 
-	cv::Mat pgd_result;
+	time_count_start = clock();
+	PGDClass_::Struct_PGD struct_PGD(img_origin, PGDClass_::PGD_SampleNums_8, PGDClass_::PGD_SampleNums_16);
+	time_count_end = clock();
+	cout << "数据初始化耗时为： " << (double) (time_count_end - time_count_start) / CLOCKS_PER_SEC << " s" << endl;
 
+	time_count_start = clock();
+	PGDClass_::calc_PGDFilter(img_origin, struct_PGD, 2, 1);
+	time_count_end = clock();
+	cout << "遍历运行时间为： " << (double) (time_count_end - time_count_start) / CLOCKS_PER_SEC << " s" << endl;
 
-	PGDClass::calc_PGDFilter(img_origin, pgd_result,
-	                         PGDClass::PGD_SampleNums_8, 2,
-	                         PGDClass::PGD_SampleNums_8, 1);
 }
 
 /*!

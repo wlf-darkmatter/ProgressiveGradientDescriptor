@@ -3,3 +3,24 @@ doc/html/*
 doc/*
 cmake-build-debug/*
 
+cmake-build-release/CMakeFiles/ProgressiveGradientDescriptor.dir/link.txt
+*.make
+*.internal
+*.includecache
+*.cmake
+cmake-build-release/CMakeFiles/Makefile2
+*.log
+*.check_cache
+*.txt
+*.cpp
+*.marks
+*.o
+*.out
+cmake-build-release/ProgressiveGradientDescriptor
+cmake-build-release/Makefile
+cmake-build-release/CMakeFiles/3.20.2/CompilerIdC/CMakeCCompilerId.c
+*.bin
+*.cbp
+.DS_Store
+data/.DS_Store
+doc/.DS_Store
