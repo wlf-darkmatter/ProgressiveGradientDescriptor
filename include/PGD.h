@@ -1,6 +1,9 @@
 #ifndef PGD_H
 #define PGD_H
 
+#define __PGD_DEBUG 0
+#define __PGD_DEBUG2 0 //数据读取debug
+
 #include <opencv2/opencv.hpp>
 
 /// @file  PGD.h
@@ -15,6 +18,7 @@
 
 
 
+
 /*!
  * @brief 所有计算PGD的内部函数都整合到了一起方便后面的调试和改进。\n
  * @note 遍历所有像素，当前像素记作【中心点】，周边有n_sample个采样点，记作【环点】\n
@@ -22,28 +26,41 @@
  * @note 每个子环电都是由二次线性插值来计算的，通过获取周边的田字格内四或九个像素值来插值计算，\n
  * @note 为了优化运算，事先计算子环点的四个或九个插值参考点相对于中心点的偏移量以及插值权重
  */
-class PGDClass {
+
+
+
+class PGDClass_ {
 public:
-	static const int save_copyBorder = 1;//安全起见对图像对边缘多加的一个保护壳
 	enum PGD_SampleNums {
 		PGD_SampleNums_SameAs_N_Sample = 0,///< 设置n2_sample的个数，默认与n_sample相等
 		PGD_SampleNums_4 = 4,
 		PGD_SampleNums_8 = 8,
-		PGD_SampleNums_12 = 12,
+		//PGD_SampleNums_12 = 12,
 		PGD_SampleNums_16 = 16,
-		PGD_SampleNums_24 = 24,
-		PGD_SampleNums_28 = 28,
-		PGD_SampleNums_32 = 32
+		//PGD_SampleNums_24 = 24,
+		//PGD_SampleNums_28 = 28,
+		PGD_SampleNums_32 = 32,
+		PGD_SampleNums_64 = 64
 	};
 
 	/*!
 	 * @struct Struct_PGD
 	 * @brief 对外调用接口
-	 * @details 每一组都有n_sample个元素
+	 * @note 数据类型只有4种，【8位】【16位】【32位】【64位】，该值由n2_sample决定
+	 * 图像有n_sample个通道，即每一个【子环点】的G值占用一个通道
 	 */
+
 	struct Struct_PGD {
-		typedef cv::Vec<double, 5> Vec5d;
-		cv::Mat M = cv::Mat::zeros(2, 3, CV_64FC(5));
+		int rows = 0;///<行数
+		int cols = 0;///<列数
+		PGD_SampleNums n_sample = PGD_SampleNums_SameAs_N_Sample;
+		PGD_SampleNums n2_sample = PGD_SampleNums_SameAs_N_Sample;
+		cv::Mat PGD;///<数据结果
+
+		Struct_PGD(int _rows, int _cols, PGD_SampleNums _n_sample, PGD_SampleNums _n2_sample);
+
+		Struct_PGD(cv::Mat &_src, PGD_SampleNums _n_sample, PGD_SampleNums _n2_sample);
+
 	};
 
 	/*!
@@ -55,6 +72,9 @@ public:
 	struct Struct_SampleOffsetList {
 		explicit Struct_SampleOffsetList(int _n_sample, double _r1);///<创建一个记录具有n_sample个【环点】的样本结构体
 		Struct_SampleOffsetList();///<缺省构造函数，什么也不做
+		Struct_SampleOffsetList(const Struct_SampleOffsetList &struct_copy);///<拷贝构造函数
+		Struct_SampleOffsetList(Struct_SampleOffsetList &&struct_move);///<移动构造函数
+
 		virtual ~Struct_SampleOffsetList();
 
 		int count = 0;
@@ -72,8 +92,10 @@ public:
 	 * arr_InterpWeight
 	 */
 	struct Struct_N4InterpList : Struct_SampleOffsetList {
-		Struct_N4InterpList(int _n_sample, double _r1, int _n2_sample, double _r2);///< 构造函数
-		~Struct_N4InterpList() override;///<析构函数
+
+		Struct_N4InterpList(Struct_SampleOffsetList &&struct_base, int _n2_sample, double _r2);///< 构造函数
+
+		~Struct_N4InterpList();///<析构函数
 		int count2 = 0;
 		int n2_sample;
 		double r2 = 0;
@@ -97,17 +119,14 @@ public:
 	};
 
 
-	static cv::Mat
-	calc_PGDFilter(const cv::_InputArray &_src,
-	               const cv::_OutputArray &_dst,
-	               PGD_SampleNums n_sample,
-	               double radius,
-	               PGD_SampleNums n2_sample = PGD_SampleNums_SameAs_N_Sample,
-	               double radius_2 = 0);
+	static Struct_PGD
+	calc_PGDFilter(const cv::_InputArray &_src, Struct_PGD &_struct_dst, double radius, double radius_2 = 0);
 
 
 private:
-	static cv::Mat def_DstMat(int rows, int cols, PGD_SampleNums n_sample);
+
+	static cv::Mat
+	def_DstMat(int rows, int cols, PGD_SampleNums n_sample, PGD_SampleNums n2_sample);
 
 	static inline void calc_CircleOffset(Struct_SampleOffsetList &struct_sampleOffset, int n_sample, double radius);
 
@@ -120,7 +139,13 @@ private:
 	static void
 	calc_N4PGD_Traverse(const cv::Mat &src, cv::Mat &PGD_Data, const Struct_N4InterpList &struct_n4Interp);
 
+	static void write_PGD_uint8(void *ptr, uint64 G);
 
+	static void write_PGD_uint16(void *ptr, uint64 G);
+
+	static void write_PGD_uint32(void *ptr, uint64 G);
+
+	static void write_PGD_uint64(void *ptr, uint64 G);
 };
 
 

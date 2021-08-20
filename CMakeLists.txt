@@ -19,9 +19,8 @@ link_directories(
         /opt/homebrew/Cellar/opencv/4.5.3_1/lib
 )
 add_executable(ProgressiveGradientDescriptor
-        include/PGD.h
         source/PGD.cpp
-        main.cpp)
+        main.cpp include/PGD.h)
 
 target_link_libraries(ProgressiveGradientDescriptor ${OpenCv_LIBS}
         )
