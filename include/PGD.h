@@ -53,6 +53,7 @@ public:
 		PGD_SampleNums n2_sample = PGD_SampleNums_SameAs_N_Sample;
 		cv::Mat PGD;///<数据结果
 
+
 		Struct_PGD(int _rows, int _cols, PGD_SampleNums _n_sample, PGD_SampleNums _n2_sample);
 
 
@@ -93,6 +94,10 @@ public:
 		double r1 = 0;
 		double *arr_SampleOffsetX = nullptr;///< double类型指针，记录第i个【环点】的**x**偏移量;
 		double *arr_SampleOffsetY = nullptr;///< double类型指针，记录第i个【环点】的**y**偏移量;
+
+		int arr_44IntOffsetX[4][4];///< int类型数组，保留给固化参数的偏移量**x**的计算
+		int arr_44IntOffsetY[4][4];///< int类型数组，保留给固化参数的偏移量**y**的计算
+
 	};
 
 	/*!
@@ -113,26 +118,15 @@ public:
 		double ***arr_InterpWeight;///<存放权重的指针，指向[n_sample][n2_sample][4]的三维数组
 		short ***arr_InterpOffsetX;///<存放每个采样点插值所需的参考点相对于中心点的X偏移量
 		short ***arr_InterpOffsetY;///<存放每个采样点插值所需的参考点相对于中心点的Y偏移量
-	};
 
-	/*!
-	 * @struct Struct_N9InterpList
-	 * @brief 继承自Struct_SampleOffsetList，包含有通过N9方法插值的必要列表，避免后续算法中不断重复计算该值
-	 */
-	struct Struct_N9InterpList : Struct_SampleOffsetList {
-		explicit Struct_N9InterpList(int n_Sample);
-
-		//~Struct_N9InterpList();
-
-		double arr_InterpWeight[32][9];///<存放权重的数组
-		short arr_InterpOffsetX[32][9];///<存放每个采样点插值所需的参考点相对于中心点的X偏移量
-		short arr_InterpOffsetY[32][9];///<存放每个采样点插值所需的参考点相对于中心点的Y偏移量
 	};
 
 
 	static Struct_PGD
-	calc_PGDFilter(const cv::_InputArray &_src, Struct_PGD &_struct_dst, double radius, double radius_2 = 0);
+	calc_PGDFilter(const cv::_InputArray &_src, Struct_PGD &_struct_dst, double radius, double radius_2);
 
+	static cv::Mat
+	calc_PGDFilter44_Int(const cv::_InputArray &_src, Struct_PGD &_struct_dst, int radius, int radius_2);
 
 private:
 
@@ -148,7 +142,7 @@ private:
 	calc_N4PGD_Traverse(const cv::Mat &src, cv::Mat &PGD_Data, const Struct_N4InterpList &struct_n4Interp);
 
 	static void
-	calc_N4PGD_Traverse_with_4453(const cv::Mat &src, const Struct_N4InterpList &struct_n4Interp);
+	calc_44IntPGD_Traverse(const cv::Mat &src, cv::Mat &PGD_Data, const Struct_N4InterpList &struct_n4Interp);
 
 	static void write_PGD_uint8(void *ptr, uint64 G);
 
