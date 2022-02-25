@@ -23,12 +23,12 @@ int main(int argc, char *argv[]) {
 	else std::cout << "载入成功" << std::endl;
 
 	time_count_start = clock();
-	PGDClass_::Struct_PGD struct_PGD(img_origin, PGDClass_::PGD_SampleNums_8, PGDClass_::PGD_SampleNums_16);
+	PGDClass_::Struct_PGD struct_PGD(img_origin.rows, img_origin.cols, PGDClass_::PGD_SampleNums_8, PGDClass_::PGD_SampleNums_16);
 	time_count_end = clock();
 	cout << "数据初始化耗时为： " << (double) (time_count_end - time_count_start) / CLOCKS_PER_SEC << " s" << endl;
 
 	time_count_start = clock();
-	PGDClass_::calc_PGDFilter(img_origin, struct_PGD, 2, 1);
+	PGDClass_::calc_PGDFilter(img_origin, struct_PGD, 5, 3);
 	time_count_end = clock();
 	cout << "遍历运行时间为： " << (double) (time_count_end - time_count_start) / CLOCKS_PER_SEC << " s" << endl;
 

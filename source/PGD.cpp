@@ -10,7 +10,7 @@ int id = 0;
 /*!
  * @brief calc_PGDFilter()函数，根据给定的圆周大小计算n_sample个【环点】的方向不变特征
  * @param _src 输入的矩阵
- * @param _struct_dst 返回的矩阵
+ * @param _struct_dst 算子配置结构体
  * @param n_sample 计算的【环点】数，一般为4的倍数，由枚举值决定
  * @param radius 【环点】半径大小（浮点数）
  * @param n2_sample 计算的【子环点】个数，一般等于n_sample
@@ -569,10 +569,6 @@ PGDClass_::Struct_N4InterpList::~Struct_N4InterpList() {
 }
 
 
-PGDClass_::Struct_N9InterpList::Struct_N9InterpList(int n_Sample) {
-
-}
-
 /*!
  * @brief Struct_PGD构造函数，创建一个外部接口，适合外部读写PGD结果
  * @param _rows 行数
@@ -590,18 +586,5 @@ PGDClass_::Struct_PGD::Struct_PGD(int _rows, int _cols, PGD_SampleNums _n_sample
 	step_1 = PGD.step[1];
 }
 
-/*!
- * @brief Struct_PGD构造函数，创建一个外部接口，适合外部读写PGD结果
- * @param _src 输入图像
- * @param _n_sample 【环点】个数
- * @param _n2_sample 【子环点】个数
- */
-PGDClass_::Struct_PGD::Struct_PGD(cv::Mat &_src, PGD_SampleNums _n_sample, PGD_SampleNums _n2_sample) {
-	n_sample = _n_sample;
-	n2_sample = _n2_sample;
-	PGD = def_DstMat(_src.rows, _src.cols, _n_sample, _n2_sample);
-	rows = PGD.rows;
-	cols = PGD.cols;
-	step_0 = PGD.step[0];
-	step_1 = PGD.step[1];
-}
+
+

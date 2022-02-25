@@ -55,7 +55,6 @@ public:
 
 		Struct_PGD(int _rows, int _cols, PGD_SampleNums _n_sample, PGD_SampleNums _n2_sample);
 
-		Struct_PGD(cv::Mat &_src, PGD_SampleNums _n_sample, PGD_SampleNums _n2_sample);
 
 		template<typename T>
 		T PGD_read(int row, int col, int channel) {
@@ -145,11 +144,11 @@ private:
 	static void
 	calc_N4_QuadraticInterpolationInit(Struct_N4InterpList &struct_n4Interp);
 
-	static inline void
-	calc_N9_QuadraticInterpolationInit(Struct_N9InterpList &struct_n9Interp, int n_sample);
-
 	static void
 	calc_N4PGD_Traverse(const cv::Mat &src, cv::Mat &PGD_Data, const Struct_N4InterpList &struct_n4Interp);
+
+	static void
+	calc_N4PGD_Traverse_with_4453(const cv::Mat &src, const Struct_N4InterpList &struct_n4Interp);
 
 	static void write_PGD_uint8(void *ptr, uint64 G);
 

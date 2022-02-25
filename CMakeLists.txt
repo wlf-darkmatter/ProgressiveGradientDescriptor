@@ -14,6 +14,7 @@ set(OpenCv_LIBS
 set(OpenCv_path
         /opt/homebrew/Cellar/opencv/4.5.4_4
         )
+
 include_directories(.)
 include_directories(include)
 include_directories(source)
